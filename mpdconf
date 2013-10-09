@@ -1,0 +1,139 @@
+# 参考配置：/usr/share/doc/mpd/mpd.example
+# 文件位置：.mpdconf [ >>> 不是 .mpd.conf ]
+
+# [ Base ]# {{{
+#--------------------------------------------
+
+filesystem_charset  "UTF-8"
+id3v1_encoding      "gbk"
+#user                "mpd"
+log_level           "default"
+
+# 可以通过 ncmpcpp 里面的 u 命令更新 数据库
+bind_to_address     "127.0.0.1"
+port                "6600"
+
+# [ input ]
+#--------------------------------------------
+
+input {
+        plugin "curl"
+#       proxy "proxy.isp.com:8080"
+#       proxy_user "user"
+#       proxy_password "password"
+}
+
+# }}}
+
+# [ ncmpcpp 波谱 ]# {{{
+#--------------------------------------------
+
+# arch 需要安装 AUR 的 ncmpcpp-fftw 包
+audio_output {
+        type "fifo"
+        name "My FIFO"
+        path "/tmp/mpd.fifo"
+        #format "44100:16:1"
+}
+
+##在 ncmpcpp 引用对应的输出即可，将下面配置添加到 ~/.ncmpcpp/config
+# visualizer_fifo_path = "/tmp/mpd.fifo"
+# visualizer_output_name = "my_fifo"
+# visualizer_sync_interval = "1"
+# #visualizer_type = "wave" (spectrum/wave)
+# visualizer_type = "spectrum" (spectrum/wave)
+
+# }}}
+
+# [ ALSA Volume Setting ]# {{{
+#--------------------------------------------
+
+mixer_type          "software"
+
+audio_output {
+    type            "alsa"
+    name            "My ALSA Device"
+}
+
+# An example of an ALSA output:
+# From : ArchWiki
+#audio_output {
+#   type        "alsa"
+#   name        "My ALSA Device"
+##  device      "hw:0,0"    # optional
+##  format      "44100:16:2"    # optional
+##  mixer_type      "hardware"  # optional
+##  mixer_device    "default"   # optional
+##  mixer_control   "PCM"       # optional
+##  mixer_index "0"     # optional
+#}
+
+# }}}
+
+# [ OSS Volume Setting ]# {{{
+#--------------------------------------------
+
+#mixer_type          "software"
+#
+#audio_output {
+#    type            "oss"
+#    name            "My OSS Device"
+#    device          "/dev/oss/oss_hdaudio0/pcm0"
+#}
+
+# An example of an OSS output:
+#
+#audio_output {
+#   type        "oss"
+#   name        "My OSS Device"
+##  device      "/dev/dsp"  # optional
+##  format      "44100:16:2"    # optional
+##  mixer_type      "hardware"  # optional
+##  mixer_device    "/dev/mixer"    # optional
+##  mixer_control   "PCM"       # optional
+#}
+
+# }}}
+
+# [ 目录 ]# {{{
+#--------------------------------------------
+
+# 使用 自定义的 mpd 相关位置，省去每次更新导至的权限还原问题
+# 在 yuer 目录下面新建 ： mpd/ 和 playlist/ 目录
+#user                "ink"
+#music_directory     "~/me/yuer"
+#playlist_directory  "~/me/yuer/playlist/"
+#db_file             "~/me/yuer/mpd/mpd.db"
+#pid_file            "~/me/yuer/mpd/mpd.pid"
+#state_file          "~/me/yuer/mpd/mpdstate"
+#log_file            "~/me/yuer/mpd/mpd.log"
+
+# 若使用 mpd 默认的 /var 下的相关位置，下面user均为你的用户名
+#chown user:audio /var/lib/mpd
+#chmod gu+s /var/lib/mpd
+#chown user:audio /var/log/mpd/ /var/log/mpd/* /var/run/mpd/ /var/run/mpd/*
+
+# }}}
+
+user                "ink"
+music_directory     "~/me/yuer"
+playlist_directory  "~/me/yuer/playlist/"
+db_file             "~/me/yuer/mpd/mpd.db"
+pid_file            "~/me/yuer/mpd/mpd.pid"
+state_file          "~/me/yuer/mpd/mpdstate"
+log_file            "~/me/yuer/mpd/mpd.log"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,43 @@
+[color]
+    ui = auto
+[alias]
+    br = branch
+    st = status
+    co = checkout
+    ci = "commit -a"
+    oneline = "log --pretty=oneline --since='2 days ago'"
+    onelog = "log -p -1"
+    # http://gitimmersion.googol.im/lab_11.html
+    hist = log --pretty=format:\"%h %ad | %an | %s%d \" --graph --date=short
+    type = cat-file -t
+    dump = cat-file -p
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[user]
+	email = 57lvii@gmail.com
+	name = lvii

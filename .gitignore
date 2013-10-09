@@ -1,0 +1,45 @@
+# vim:set et ft=conf fdm=marker sw=4 sts=4 ts=4 nopaste :
+
+# 注释符号 ＃ 开头的行都会被 Git 忽略。
+# 标准的 glob 模式匹配，glob 模式是 shell 简化的正则表达式
+# 惊叹号（!）取反
+
+## [ git 中忽略的文件 / 目录 ]
+##--------------------------------------------
+## 忽略所有(隐藏/普通)文件/目录
+#*
+## 忽略所有目录，注释后,显示普通目录，需要另外添加规则忽略普通目录
+##*/
+#
+## 忽略所有隐藏文件/目录
+##.*
+## 忽略所有隐藏目录
+#.*/
+#
+## [ 忽略白名单 ]
+##--------------------------------------------
+#
+#!.gitignore
+
+# [ new ignore file list ]
+#--------------------------------------------
+
+*.swp
+aria2/dht.dat
+layout_musca/firefox
+layout_musca/xterm
+ncmpcpp/cdk.config
+ncmpcpp/error.log
+irssi/config.autosave
+irssi/away.log
+
+#dzen/load.xbm
+#dzen/show_icons.sh
+#dzen/smem.sh
+#dzen/stalonetrayrc
+#dzen/statusbar_icons/
+#dzen/stlarch_icons-1.2/
+#dzen/temp.awk
+#dzen/test.sh
+#dzen/used_mem.awk
+

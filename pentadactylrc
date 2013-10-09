@@ -1,0 +1,323 @@
+" vim:set et ft=vim fdm=marker sw=4 sts=4 ts=4 nopaste :
+
+" [ consult ]"{{{
+"--------------------------------------------
+" From : Pentadactyl 简单介绍
+
+
+
+"}}}
+
+" [ Option ]"{{{
+"--------------------------------------------
+
+" 加载 runtimepath 定义路径下面的文件。将其他定义，独立出来，可以控制是否加载
+" runtime 默认目录是 .pentadactyl ，source 默认目录，是家目录
+"runtime ~/.me/penta.url
+"source ~/.me/penta.url
+
+"" 补全匹配模式，默认：.?:smart
+set wildcase=:smart
+" 命令行 自动补全
+set wildmode=list:full
+" 使用 tab 触发 自动补全，将补全正则表达式式设为 空
+set autocomplete=
+" pentadactyl 默认使用 | 分割 url，若 url 中包含 | 会被分割为两个 url
+set urlseparator=
+" 默认为普通模式，非插入模式
+"set focuscontent
+
+" 所有的匹配都会高亮
+set hlfind
+
+set history=25
+
+"set visualbell
+
+" 使用 :open 命令打开参数时，若参数不是URL，调用的搜索引擎。默认：google
+" 搜索引擎关键词，使用 :dialog searchengines 查看搜索引擎对应的关键字
+"set defsearch=google
+set defsearch=ssl
+
+"" 默认：Pentadactyl
+set titlestring="Firefox"
+
+" [ 状态栏 主题 ]
+"--------------------------------------------
+"" From : http://www.douban.com/group/topic/14238246/
+"" 使用 hi status 命令，TAB 补全可以查看对应状态行的属性值
+hi CmdCmdLine color: black !important; background: #DCDAD5 !important;
+"hi StatusLineNormal color: black !important; background: #8a8a8a !important;
+hi StatusLineNormal color: black !important; background:  #8a8a8a !important;
+
+
+
+
+"}}}
+
+" [ Advance ]"{{{
+"--------------------------------------------
+
+" 文字链接被选中，则直接打开链接；选中的是一般文字，用默认搜索引擎搜索
+" 否则打开:tabopen或者:open命令行，手动输入关键字搜索
+"map t -js content.getSelection().toString()!=''?dactyl.execute(":tabopen "+ content.getSelection()):CommandExMode().open("tabopen ")
+"map o -js content.getSelection().toString()!=''?dactyl.execute(":open "+ content.getSelection()):CommandExMode().open("open ")
+
+" [[ 与 ]] 跳转到下一页的链接识别
+"" default: '^Next [>»]','^Next »','\bnext\b',^>$,'^(>>|»)$','^(>|»)','(>|»)$','\bmore\b'
+set nextpattern='\bnext\b',^>$,'^(>>|»)$','^(>|»)','(>|»)$','\bmore\b','s*下一页|下一张|下一章|下一篇|下一頁|下页|后页s*'
+set previouspattern='\bprev|previous\b',^<$,'^(<<|«)$','^(<|«)','(<|«)$','s*上一页|上一张|上一章|上一篇|上一頁|上页|前页s*'
+"set nextpattern=^(>>|››|»)$
+"set previouspattern=^(<<|‹‹|«)$
+
+"这个用来对付某些支持热键的网站，如gmail googlereader，暂保留jk可用，简单容易懂。
+set passkeys=https:'//mail.google.comcom|www.google.com/reader/:jk'
+
+
+
+
+
+"}}}
+
+" [ URL 缩写 ]"{{{
+"""""""""""""""""""""""""""""""""""""""""""""
+" 命令行 模式 缩写，打出以下缩写之后，再加一个空格展开缩写！
+"cabbrev ..  localhost
+" localhost 域名解析会耗费时间 ? [socket]
+cabbrev ..  127.0.0.1
+cabbrev ,,  https://
+cabbrev cf  about:config
+cabbrev ss  https://
+
+" [ firefox ]"{{{
+"--------------------------------------------
+" Firefox 论坛
+cabbrev fm  g.mozest.com
+cabbrev ff  www.firefox.net.cn/forum/index.php
+" Plugin 插件
+cabbrev fp  https://addons.mozilla.org/zh-CN/firefox/
+cabbrev us  userscripts.org
+
+"}}}
+
+" [ Google ]"{{{
+"--------------------------------------------
+cabbrev g   google.com.hk
+cabbrev gf  google.com.hk/finance?hl=zh-CN&sourceid=cnhp
+cabbrev gp  ditu.google.cn/maps?hl=zh-cn&tab=wl
+cabbrev gi  images.google.com
+cabbrev gt  translate.google.com/#en|zh-CN|
+cabbrev ge  https://encrypted.google.com
+cabbrev gm  https://mail.google.com
+cabbrev gr  https://www.google.com/reader
+cabbrev gc  https://www.google.com/accounts
+cabbrev gd  https://docs.google.com
+
+"}}}
+
+" [ linux ]"{{{
+"-------------------------------------------
+cabbrev ly  linuxtoy.org
+cabbrev st  solidot.org
+" archlinux
+cabbrev a   archlinux.org
+cabbrev ab  bbs.archlinux.org
+cabbrev ak  wiki.archlinux.org
+cabbrev aur aur.archlinux.org
+" linuxfans
+cabbrev lf  forum.linuxfans.org
+" linuxsir archlinux
+cabbrev la  www.linuxsir.org/bbs/forum96.html
+" linuxsir gentoo
+cabbrev lg  www.linuxsir.org/bbs/forum59.html
+" linuxsir soft vim fvwm
+cabbrev ls  www.linuxsir.org/bbs/forum28.html
+" linuxsir debian
+cabbrev ld  www.linuxsir.org/bbs/forum49.html
+" linuxsir fedora
+cabbrev lr  www.linuxsir.org/bbs/forum40.html
+" ubuntu
+cabbrev uu  forum.ubuntu.org.cn
+
+"}}}
+
+
+" [ NEWS ]
+"-------------------------------------------
+"" linux 安全
+"www.freebuf.com
+
+cabbrev bd  baidu.com
+cabbrev bt  torrentz.eu
+cabbrev db  douban.com
+cabbrev rr  renren.com
+cabbrev qq  web.qq.com
+cabbrev wx  wx.qq.com
+cabbrev tb  taobao.com
+cabbrev xm  xiami.com/music
+cabbrev yd  dict.youdao.com
+cabbrev yk  youku.com
+
+" [ douban / github / delicious / deviantart / twitter ]"{{{
+"--------------------------------------------
+cabbrev dh  douban.com/people/if_else
+cabbrev ds  delicious.com/lvii
+cabbrev dt  57lvii.deviantart.com
+cabbrev it  https://github.com/lvii
+cabbrev tt  https://twitter.com/57lvii
+
+"}}}
+
+"}}}
+
+" [ map 快捷键 ]"{{{
+""""""""""""""""""""""""""""""""""""""""""""
+
+" [ 自定义缩写 ]"{{{
+"--------------------------------------------
+"" https://g.mozest.com/viewthread.php?tid=38908&page=32#pid285954
+"" map -modes=n -builtin -silent j 5j
+"" map -modes=n -builtin -silent k 5k
+"" From: help map
+"" map -b -m input <A-n> <Down>
+
+" c 键进入命令行模式
+map -b c :
+
+" 屏幕滚动
+map -b -m normal j 5j
+map -b -m normal k 5k
+map -b -m normal J <C-d>
+map -b -m normal K <C-u>
+
+" Menu 显示/隐藏 菜单栏 开关
+map <F2> :set guioptions!=m<CR>
+map <F3> :set guioptions!=T<CR>
+
+" 停止 加载页面
+map -b s <C-c>
+
+" 标签页 切换
+"map -b T <C-^>
+map -b <F11> gT
+map -b <F12> gt
+
+"" firefox 15 使用 pental nightly 版本，mapleader 选项被移除：
+"" :h NEWS 查看提示
+map , <leader>
+map -b <leader>p   gT
+map -b <leader>n   gt
+map -b <leader>a   :dialog      addons<CR>
+map -b <leader>b   :sidebar!    BookMarks<CR>
+"map -b <leader>b   :sidebar!   书签<CR>
+map -b <leader>B   :dialog      bookmarks<CR>
+map -b <leader>C   :dialog      cookies<CR>
+" 打开 Delicious 侧栏"
+map -b <leader>d   :sidebar!    Delicious<CR>
+map -b <leader>D   :dialog      downloads<CR>
+map -b <leader>h   :sidebar!    history<CR>
+"map -b <leader>h   :sidebar!    历史<CR>
+map -b <leader>H   :dialog      history<CR>
+map -b <leader>i   :dialog      pageinfo<CR>
+map -b <leader>I   :dialog      import<CR>
+" 若不注释与 m 有关的按键定义，会与 mark 标记冲突
+map -b <leader>m   :dialog      addbookmark<CR>
+map -b <leader>o   :dialog      openfile<CR>
+map -b <leader>p   :dialog      preferences<CR>
+" 书签 / 历史记录 详细管理
+map -b <leader>P   :dialog      places<CR>
+map -b <leader>q   ZZ
+map -b <leader>r   :restart<CR>
+"map -b <leader>s   :dialog     pagesource<CR>
+
+"map -b <leader>s   :source ~/.pentadactylrc<CR>
+map -b <leader>S   :rehash<CR>
+
+" 快速改变页面编码
+map -b <leader>eu :set encoding=UTF-8
+map -b <leader>eg :set encoding=GB2312
+
+
+" 停止网页加载 stoping，默认 <C-c>
+"map -modes=n,v <C-s> :stop<Return>
+
+"=为新的页面放大+，不过数字键盘那边不能用
+"map -modes=n,v = -builtin +
+
+" 左右切换Tab，原来的可以用方向键搭救；不喜可以改成前进后退
+" 默认的前进后退的热键也很方便L H <C-o> <C-i>
+"map -modes=n,v h gT
+"map -modes=n,v l gt
+
+" 复制内容比网址实用一点吧，互换很有必要
+"map -modes=n,v y -builtin Y
+"map -modes=n,v Y -builtin y
+
+"map < <C-6>
+"map -b > g$
+"map -b , <C-o>
+"map -b . <C-i>
+"map U :ju<CR>
+"map <C-.> :tabm<CR>
+
+"" 想办法再减少按键频率
+"map -b g gg
+" 查看源码 开/关
+"map -b S gf
+"map -b " gn
+"map -b ] ]]
+"map -b [ [[
+
+"}}}
+
+" [ Firefox keyshot ]"{{{
+"""""""""""""""""""""""""""""""""""""""""""""
+
+"map -b <C-c> <C-v><C-c>
+"" normal 和 visual 模式
+"nmap -b <C-c> <C-v><C-c>
+"vmap -b <C-c> <C-v><C-c>
+"" insert 和 command line 模式
+"imap -b <C-c> <C-v><C-c>
+"cmap -b <C-c> <C-v><C-c>
+
+" noremap 等价于使用 -builtin 参数的 map
+"map -modes=n,v,i,c <C-c> -builtin <C-v><C-c>
+
+" 复制 / 粘贴 / 撤销 / 全选
+" pentadactyl 中 map 命令引入一个特殊字符 – <Pass>
+" 该特殊字符可以把前面 mapping 的键直接传给 firefox
+map -m n,v,i,c,t <C-a> <Pass>
+map -m n,v,i,c,t <C-c> <Pass>
+map -m i,c,t <C-v> <Pass>
+map -m i,c,t <C-x> <Pass>
+map -m i,c,t <C-z> <Pass>
+
+
+" 还原书签栏
+"map -b <C-b> <C-v><C-b>
+" 还原 ctrl-k 跳到搜索栏
+"map -b <C-k> <C-v><A-d><Tab>
+
+
+"}}}
+
+" [ 快速启用/禁用代理 ]"{{{
+"""""""""""""""""""""""""""""""""""""""""""""
+" From : http://linuxtoy.org/archives/用-vimperator-快速启用禁用代理.html
+" From : http://vim.group.javaeye.com/group/topic/16187
+"map <F12> :set! network.proxy.type=1<CR>:echo ":("<CR>
+"map <S-F12> :set! network.proxy.type=0<CR>:echo ":)"<CR>
+" 代理状态的图标 Firefox 插件 QuickProxy
+
+" 不如直接：
+"map  :set! extensions.autoproxy.proxyMode=auto:echo "auto"
+"map  :set! extensions.autoproxy.proxyMode=global:echo "global"
+
+"}}}
+
+"}}}
+
+
+
+

@@ -1,0 +1,266 @@
+# vim:set et ft=screen fdm=marker sw=4 sts=4 ts=4 nopaste :
+
+# [ Style ]# {{{
+#--------------------------------------------
+# 关闭启动画面 default: on
+startup_message off
+
+# 当 terminal 关闭时，screen 自动挂起 default: on
+autodetach on
+
+# 不使用 响铃 beep 提示，而使用 闪屏
+vbell off
+#vbell_msg " Wuff ---- Wuff!! "
+
+# 退出相关程序(vim,htop...)，自动刷新屏幕
+altscreen on
+
+# 刷新全部窗口
+#allpartial on
+
+# 和 redisplay 一同刷新窗口，仅刷新当前激活窗口，默认：on
+#partial on
+#redisplay
+
+
+
+# }}}
+
+# [ base ]# {{{
+#--------------------------------------------
+
+# 指定 shell
+#shell bash
+#shell /bin/zsh
+
+# 默认开始路径
+# chdir
+
+# 历史回滚行数
+defscrollback 10000
+
+# 指定编码
+defencoding utf-8
+encoding utf-8 utf-8
+# Utf-8 handling
+#defutf8 on
+
+
+# }}}
+
+# [ key 快捷键 ]# {{{
+#--------------------------------------------
+
+# 默认前缀快捷键 C-a
+# 尝试过：C-b( vim 滚屏 )，C-x(无法切换上次聚焦窗口)，\\ `` 不方便
+escape ^ll
+#escape \\
+#escape ``
+
+# F1 to select 1
+#bindkey -k k1 select 1
+
+# F7 to detach screen session
+#bindkey -k k7 detach
+
+# F8 to kill current screen window
+#bindkey -k k8 kill
+
+# F9 to create a new screen
+bindkey -k k9 screen
+
+# F10 to rename current screen window
+#bindkey -k k; title
+
+# F11/F12 to "move to previous window"
+bindkey -k F1 prev
+bindkey -k F2 next
+
+# }}}
+
+# 底部标题栏 caption / hardstatus(最底部)
+# 转义字符：man 手册里面的 STRING ESCAPES
+
+# [ Color VARIABLES - Strings ]# {{{
+#--------------------------------------------
+# From : https://github.com/px/screenrc/blob/master/.screenrc
+# COLOR: colors codes are combinations of
+# [attribute modifier] [color description]
+# the manual talks of "attribute/color modifiers".
+# man 手册 "STRING ESCAPES".
+# k      black
+# r      red
+# g      green
+# y      yellow
+# b      blue
+# m      magenta    洋红
+# c      cyan       亮蓝
+# w      white
+# d      default color
+# .      leave color unchanged
+# %h     king@king:~
+# %l     loadavg 负载
+# }}}
+
+# 大括号里面为颜色组合
+# [ caption 状态栏 ]# {{{
+#--------------------------------------------
+# XXX [?] 状态栏, 不用 Hardstatus 实现, 因为要把 xterm 的 title 伪装成 Hardstatus
+
+# 当前聚焦窗口不使用背景色是因为：背景色只能作用于文字部分，空白间距不能渲染，看起来不舒服
+# 相反 tmux 背景色可以应用于空白间隔，可以使用中括号，等标记标志
+
+# 背景颜色与终端相同,无高亮，全部用颜色标注，都为粗体
+# [king] 0 bash  *1 bash                                                   06-26 11:06
+#caption always "%{=b}%{b}%{G}[%H]%{-}  %+07=%-w%7L>%{b .y}*%n %t%{-}%+w%-014<  %-012=%{b m}%m/%d %c "
+
+# 全局粗体，蓝色字体，绿色用户名，取消之前属性，窗口列表举例7像素，当前聚焦窗口为黄色，最后的窗口举例时间14像素
+# [king] 0 irssi  1 vim  2 vim                                                       05/21 10:21
+#caption always "%{=b k}%{c}[%H] %{-}  %+07=%-w%7L>%{g}%n %t%{-}%+w%-014<  %-012=%{b y}%m/%d %c "
+# %+07=%-w%7L
+# XXX 窗口列表从第 7 个字符处开始，会覆盖前面的超过 7 个字符的信息
+
+# [ king ]  0 /tmp  1 /boot                                              05/21 16:23
+#caption always "%{=b k}%{c}[ %H ] %{-} %L=%-w%7L>%{g}%n %t%{-}%+w%-014<  %-012=%{b y}%m/%d %c "
+
+# 0.05 0.05 0.05 | 0 ~  1 /tmp  [ 2 top ]                                           05/21 16:10
+#caption always "%{=b k}%{c} %l | %{k}%L=%-w%7>%{g}[ %n %t ]%{-}%+w%-014< %-012=%{b y}%m/%d %c "
+#caption always "%{=b k}%{c} %l | %{k}%L=%-w%7>%{g}%n %t%{-}%+w%-014< %-012=%{b y}%m/%d %c "
+
+#  06-20 11:59 | 0 su  1 irssi  2 vim  5 ~                                    0.10 0.04 0.00
+#caption always "%{=b k}%{b y} %m-%d %c | %{k}%L=%-w%7>%{g}%n %t%{-}%+w%-014< %-016=%{c} %l "
+caption always "%{=b k}%{c} %l | %{k}%L=%-w%7>%{g}%n %t%{-}%+w%-014< %-013=%{b y} %m-%d %c "
+# 当前焦点 窗口 背景色高亮
+#caption always "%{=b k}%{b y} %m-%d %c | %{k}%L=%-w%7>%{= gk}%n %t%{-}%+w%-014< %-016=%{c} %l "
+# 时间 / 当前焦点 窗口 / loadavage 背景色高亮
+#caption always "%{=b k} %{= yk} %m-%d %c %{-} %{k}%L=%-w%7>%{= gk}%n %t%{-}%+w%-014< %-016=%{= ck} %l "
+
+# 背景绿色，前景 加粗 浅灰
+#caption always "%{=b k}%{b y} %m-%d %c / %{k}%L=%-w%7>%{gk}%n %t%{-}%+w%-014< %-016=%{c} %l "
+# 背景绿色，前景 正常 黑色
+#caption always "%{=b k}%{b y} %m-%d %c / %{k}%L=%-w%7>%{= gk}%n %t%{-}%+w%-014< %-016=%{c} %l "
+# 背景色 当前高亮色 时间 当前窗口无任何修饰符
+#caption always "%{= kw}%-w%{= bY}%n %t%{-}%+w %-= %c"
+
+
+# %{k}%L=%-w%7
+# 背景色黑色 左对齐 窗口标题 7像素宽
+# >%{g}%n %t%{-}%+w%-014<
+# 聚焦的窗口标题背景色 绿色 样式：编号 名称 最大宽度 14 字符宽度
+
+#  0.00 0.01 0.05 | 0 vim  1 top  2 /tmp                                            05/21 16:07
+#caption always "%{=b k}%?%F%{c}%:%? %l | %?%F%{k}%?%L=%-w%45>%{g}%n %t%{-}%+w%-014< %-012=%{b y}%m/%d %c "
+
+# king | 0.01 0.00 0.00 | 06-25 12:25 |0$* bash
+#caption always "%?%F%{-b 4w}%:%{-b bb}%? %H | %l | %m-%d %c |%?%F%{-b 4w}%?%L=%-Lw%45>%{-b w4}%n%f* %t%{-}%+Lw%-0<"
+
+# 单一窗口 无窗口列表，最后为窗口编号
+# 10:37AM Sat 26-06-2010  bash                                                         0
+#caption always "%?%F%{= Bk}%? %C%A %D %d-%m-%Y %{= kB} %t%= %?%F%{= Bk}%:%{= wk}%? %n "
+
+# king|12:33|25Jun|0*$bash 多背景色 窗口标题 有先后 * - 标志
+#hardstatus alwayslastline "%{rw}%H%{wk}|%{wr}%c%{wk}|%d%M|%?%-Lw%?%{wb}%n*%f%t%?(%u)%?%{wk}%?%+Lw%?" 
+
+#caption always "%{= kw}%-w%{= kG}%{+b}[%n %t]%{-b}%{= kw}%+w %=%d %M %0c %{g}%H%{-}"
+
+#------------------- compilex ----------------------
+# [ king ][               0$ bash  (1*$bash)  2-$ bash                 ][ 25/06 12:32 ]
+#hardstatus alwayslastline '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %d/%m %{W}%c %{g}]'
+
+# [king]  *0 bash                                                              06-25 12:26
+#hardstatus alwayslastline "%{=b}%{b}%{C}[%H]%{-}  %+010=%-w%8L>%{uB .my}*%n %t%{-}%+w%-014<  %-012=%{b m}%m-%d %c "
+#caption always "%{= R}[ %{=b b}%-w%{=rb db}%>%n %t%{-}%+w%{-b}%< %=%{R}][%{M}%D %M %d %{G}%c%{R}]"
+
+#------------------- simple ----------------------
+# Screen(s): 0 bash  1* bash                                              12:28PM  Fri, Jun/25/2010
+# hardstatus alwayslastline "%{=b}%{G} Screen(s): %{b}%w %=%{kG}%C%A  %D, %M/%d/%Y "
+
+# 窗口标题  序号，没有其他修饰符了
+#caption always "%{.kW}%-w%{.KY}%n %t%{-}%+w %=%{..G} %H %{..Y} %m/%d %C%a " 
+
+# 背景色 当前高亮色 时间 当前窗口无任何修饰符
+#caption always "%{= kw}%-w%{= bY}%n %t%{-}%+w %-= %c"
+
+
+
+
+# }}}
+
+### 运行 screen 后，自动开启 4 个窗口
+### https://github.com/pbrisbin/screen-config/blob/master/screenrc
+#screen
+#screen
+#screen
+#select 0
+
+# [ XXX ] #--------------------------------------------
+
+# 定制 region 函数键与Emacs一致
+#bind 0 remove
+#bind 1 only
+#bind 2 split
+#bind o focus
+
+## 在 ~/.Xdefaults 中也定义了
+#term xterm-256color
+
+## https://github.com/pbrisbin/screen-config
+## XXX screen 可以使用 滚动条 (ssh/konsole/xterm/putty)
+#termcapinfo xterm-256color ti@:te@
+
+## ubuntu /etc/screenrc
+termcapinfo xterm|xterm-256color|xterms|xs|rxvt ti@:te@
+# 使 screen 在 xterm 里面可以使用滚动条和滚轮 scrollbar
+#termcapinfo xterm ti@:te@
+#terminfo xterm*|rxvt ti@:te@
+
+# [ title ]
+#--------------------------------------------
+
+# 将所运行程序的名称作为 screen 的 title 的功能, 默认bash
+# http://superuser.com/questions/339844/why-is-screen-not-showing-the-current-running-process-name-mac-osx-terminal-ba
+# screen needs a 'magic string' to know how your prompt *ends* so it can pick up the command that's running
+shelltitle '$ |bash'    ## '$' ==> PS1 结束字符
+##shelltitle '· |zsh'    ## zsh 扩展内置的 precmd_functions 函数来动态修改 title
+
+# screen中动态设置标题
+# http://www.adam8157.info/blog/2011/04/screen-dynamic-titles/
+hardstatus off
+# %H hostname 当在远程启动 screen 时才变得有效
+hardstatus string "Screen@%H: %t"
+## 把 xterm 的 titlebar 当作 screen 的hardstatus
+termcapinfo xterm* 'hs:ts=\E]0;:fs=\007:ds=\E]0;\007'
+
+
+
+# [ termcapinfo ]
+#--------------------------------------------
+
+## 定制 title bar
+#termcapinfo rxvt 'hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007'
+#termcapinfo xterm 'hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007'
+##terminfo xterm* 'XT:hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007'
+
+# screen 如何设置颜色：AB = 背景色，AF = 前景色
+##terminfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+
+# 修复 rxvt-unicode 256 色 问题
+#terminfo rxvt-unicode 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+
+## Set messages timeout to 5 second:
+#msgwait 5
+#msgminwait 2
+#pow_detach_msg "Screen session of \$LOGNAME \$:cr:\$:nl:ended."
+
+#nethack style messages
+#nethack on
+# Disable login
+#deflogin off
+
+## Auto Started programs when screen is started
+## XXX 启动 screen 自启动程序，每个 screen 都会执行 XXX
+## -t --> tittle
+#screen -t irssi     0   irssi
+#screen 1   zsh
+
+

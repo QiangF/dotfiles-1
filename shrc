@@ -1,0 +1,830 @@
+#!/bin/sh
+
+# [ export ENV 环境变量 ]# {{{
+#--------------------------------------------
+
+export PATH=${PATH}:${HOME}/.todo:${HOME}/code/shell
+export CDPATH=.:..:../..:${HOME}:${HOME}/me:${HOME}/text
+
+# XXX 启动交互式 python 可以 Tab 自动补全
+export PYTHONSTARTUP=${HOME}/.pythonstartup
+# pinax 下载的 django 插件添加到 PYTHONPATH 中，其他程序也可以调用
+export PYTHONPATH=${PYTHONPATH}:${HOME}/code/pinax/lib/python2.7/site-packages
+
+# yaourt edit PKGBUILD notice everytime
+export EDITOR="vi"
+
+export MYSQL_PS1="[\\u@\\h \\d]"
+
+# [ TERM 环境变量 ]
+#--------------------------------------------
+# XXX 在 .Xdefaults 中设置：xterm*termName: xterm-256color
+# 无需在 .bashrc / .zshrc 中同时重复定义 $TERM 污染变量
+
+# [ man 手册 颜色 ]#{{{
+#--------------------------------------------
+export LESS_TERMCAP_mb=$'\E[01;31m'   # begin blinking
+export LESS_TERMCAP_md=$'\E[01;31m'   # begin bold
+export LESS_TERMCAP_me=$'\E[0m'       # end mode
+export LESS_TERMCAP_se=$'\E[0m'       # end standout-mode
+export LESS_TERMCAP_so=$'\E[1;33;40m' # begin standout-mode - info box
+export LESS_TERMCAP_ue=$'\E[0m'       # end underline
+export LESS_TERMCAP_us=$'\E[1;32m'    # begin underline
+#}}}
+
+# [ man keychain ]# {{{
+#--------------------------------------------
+[[ -z "$HOSTNAME" ]] && HOSTNAME=`uname -n`
+[[ -f ${HOME}/.keychain/${HOSTNAME}-sh ]] && . $HOME/.keychain/${HOSTNAME}-sh
+[[ -f ${HOME}/.keychain/${HOSTNAME}-sh-gpg ]] && . $HOME/.keychain/${HOSTNAME}-sh-gpg
+# }}}
+
+
+# }}}
+
+
+
+function keys { source ~/.keychain/${HOSTNAME}-sh; }
+
+# [ 借鉴 ]# {{{
+#--------------------------------------------
+
+# https://github.com/Barrucadu/home/blob/master/config/zsh/functions
+
+# System
+function start()
+{
+    for arg in "${*[@]}"; do
+        sudo /etc/rc.d/$arg start
+    done
+}
+
+function stop()
+{
+    for arg in "${*[@]}"; do
+        sudo /etc/rc.d/$arg stop
+    done
+}
+
+function restart()
+{
+    for arg in "${*[@]}"; do
+sudo /etc/rc.d/$arg restart
+    done
+}
+
+function reprobe()
+{
+    for arg in "${*[@]}"; do
+sudo modprobe -r $arg
+        sudo modprobe $arg
+    done
+}
+
+function maintain()
+{
+    # Update
+    sudo pacman -Syu
+    sudo abs
+
+    # Clean
+    sudo pacman -Rsc $(pacman -Qtdq)
+    sudo localepurge
+    sudo pacman -Scc
+
+    # Generale maintenence
+    sudo pacman-optimize
+    sudo mandb
+    sudo ldconfig -v
+    sudo updatedb
+    sudo sync
+}
+
+function shutdownhost()
+{
+    if ping -c1 $1 &>/dev/null; then
+        ssh $1 "sudo shutdown -hP now"
+    fi
+}
+
+# Running programs
+function r()
+{
+    $* &>/dev/null &
+    disown %%
+}
+
+function re()
+{
+    $* &>/dev/null &
+    disown %%
+    exit
+}
+
+extract () {
+  # if 判断可以去掉
+  if [ -f $1 ] && [ -r $1 ] ; then
+    case $1 in
+      (*.tar.bz2|*.tbz2)  tar xjf $1;;
+      (*.tar.gz|*.tgz)    tar xzf $1;;
+      (*.bz2)             bunzip2 $1;;
+      (*.rar)             rar x $1;;
+      (*.gz)              gunzip $1;;
+      (*.tar)             tar xf $1;;
+      (*.zip)             unzip $1;;
+      (*.Z)               uncompress $1;;
+      (*.7z)              7z x $1;;
+      (*.deb)             sudo dpkg -i $1;;
+      (*.rpm)             sudo alien -dik $1;;
+      (*)                 echo "extract: unsupported format $1" ;;
+    esac
+  else
+    echo "extract: file not found or unreadable: $1"
+  fi
+}
+
+function sign ()
+{
+    KEY=$1;
+    KEYSERVER='keyserver.ubuntu.com';
+    
+    [[ "$2" != "" ]] && KEYSERVER=$2
+    
+    gpg --keyserver $KEYSERVER --recv-keys $KEY
+    gpg --yes --ask-cert-level --sign-key $KEY
+    gpg --keyserver $KEYSERVER --send-keys $KEY
+}
+
+# }}}
+
+## 本机 IP 地址
+#function lip { ifconfig|sed -n '2p' }
+## 查询公网 IP，需要安装 curl 工具
+#function pubip() 
+#{ curl -s 'http://checkip.dyndns.org' | sed 's/.*Current IP Address: \([0-9\.]*\).*/\1/g'; }
+#
+## 查询执行 pacman -S 安装命令
+#function pkg()
+#{ sed -n '/pacman -S /p' /var/log/pacman.log|awk -F "'" '{print $2}'|uniq }
+#
+## 用 rox 打开当前目录
+#function fm()
+#{ $mydir=`pwd`; `rox $mydir &`; }
+#
+## 使用 atd 播放提示音，要用到 alsa 声音驱动
+#alarm()
+#{ echo "msg ${argv[2,-1]} && aplay -q ~/.sounds/MACSound/System\ Notifi.wav" | at now + $1 min }
+#
+#nms() { find . -name $* }
+
+# [ 打印 256 颜色 ]# {{{
+#--------------------------------------------
+function 256tab() {
+    for k in `seq 0 1`;do 
+        for j in `seq $((16+k*18)) 36 $((196+k*18))`;do 
+            for i in `seq $j $((j+17))`; do 
+                printf "\e[01;$1;38;5;%sm%4s" $i $i;
+            done;echo;
+        done;
+    done
+}
+
+# }}}
+
+
+# [ alias ]#{{{
+#--------------------------------------------
+
+alias startx='startx &> /dev/shm/startx.log'
+
+# [ cd .. 多级目录回溯 ]# {{{
+#--------------------------------------------
+alias  ~='cd ~'
+alias ..="cd .."
+alias ..2="cd ../.."
+alias ..3="cd ../../.."
+alias ..4="cd ../../../.."
+alias ..5="cd ../../../../.."
+# }}}
+
+# [ cp / mv / rm / ln 覆盖提示 ]# {{{
+#--------------------------------------------
+alias cp='cp -iv'
+alias mv='mv -iv'
+alias rm='rm -iv --preserve-root'   ## 防止杯具: rm / 下面这几个命令 chgrp chown chmod 也有该参数
+alias ln='ln -iv'
+# }}}
+
+# [ ls ]# {{{
+#--------------------------------------------
+# XXX [?] 下面的别名都会将 ls 使用上面的代替，无须在重复相应参数
+
+# 系统原生 ls
+alias lls='/bin/ls'
+
+alias l='ls -1X'
+alias la='ls -A'
+alias lx='ls -xX'                                   # x 按行排列，X 按文件扩展名字母顺序排序
+alias ls='ls -Fx --color=auto'                      # 颜色，文件类型标志符，横向排列
+alias lla='ls -Alh --time-style=long-iso'
+
+#alias ll='ls -lh --time-style=+%Y-%m-%d'
+#alias ll='ls -lh --time-style=long-iso'
+
+# XXX 注意，开头的 $ 符号转义: 时间戳 颜色 格式化字符 From : roylez
+# 红蓝 时间戳 高亮
+#alias ll=$'ls -lh --color=auto -X --time-style="+\e[33m| \e[34m%Y-%m-%d \e[33m|\e[m"'
+# 黄色分隔线 分隔时间戳
+alias ll=$'ls -lh --color=auto -X --time-style="+\e[33m|\e[0m %Y-%m-%d \e[33m|\e[0m"'
+# %F %T ==> %Y-%m-%d %H:%M 显示文件修改的准确时间，并按照修改时间排序
+alias lt=$'ls -lht --color=auto -X --time-style="+\e[33m|\e[0m %F %T \e[33m|\e[0m"'
+
+# 同时显示隐藏目录
+#alias ld='ls -d *(-/DN)'
+# From：linuxgem.is-programmer.com/2007/10/4/list-only-directories-and-count-them.5107.html
+
+# 不显示隐藏目录
+alias ld='ls -d */'
+# 显示隐藏目录
+alias lhd='ls -d .*/'
+
+
+
+# }}}
+
+# [ git ]# {{{
+#--------------------------------------------
+alias ga='git add'
+#alias ga='git add -A'
+alias gc='git commit '
+alias gca='git commit -a -m'
+alias gcl='git config -l'
+alias gce='git config -e'
+alias gd='git diff'
+alias gl='git ls-files'
+#alias go='git log'
+alias go='git log --graph'
+alias gs='git status'
+alias gb='git branch'
+alias gbc='git checkout'
+
+alias gp='git push'
+alias gu='git pull'
+alias gpu='git pull --rebase origin master'
+alias gpa="git push origin all:all"
+alias gpo="git push origin master"
+alias gp2="git push origin2 master"
+alias gp3="git push origin3 master"
+
+
+# alias gh='git pull git@github.com:lvii/home.git master'
+# git pull git@github.com:lvii/ink.git debian:master
+
+# }}}
+
+# [ 系统 ]# {{{
+#--------------------------------------------
+
+alias exit="clear; exit"
+alias grep='grep --color=auto -i'
+# less -R 解析 ASCII 颜色字符
+alias less='less -R'
+alias info='info --vi-keys'
+alias tee='tee -a'
+
+alias sch='find . -name '
+
+# 查看 窗口 class 属性 / 名称 # From : Archwiki Openbox
+alias xp='xprop | grep "WM_WINDOW_ROLE\|WM_CLASS" && echo "WM_CLASS(STRING) = \"NAME\", \"CLASS\""'
+
+#alias tree="ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'"
+
+alias openports='netstat -nape --inet'
+alias port='netstat -ntlp'      #opening ports
+
+## XXX 只适用于 zsh show directories size
+#alias dud='du -s *(/)'
+
+# From : http://git.sysphere.org/dotfiles/tree/zshrc?h=public
+
+# size 使用 M / G 标记 文件系统类型( ext4 / swap ...)
+alias df="df -hT"
+# XXX -c 参数会递归检索当前目录，特别当前目录有好多文件
+alias du="du -h"
+alias dus="du -S | sort -n"
+
+alias psg="ps auxw | grep -i "
+alias psptree="ps auxwwwf"
+
+# 弹出 / 收回光驱
+alias eject="eject -v "
+alias retract="eject -t -v "
+
+alias vuser="fuser -v "
+
+
+# }}}
+
+# [ soft ]# {{{
+#--------------------------------------------
+
+alias ee='emacsclient -t'
+
+alias c='clear'
+alias m='mutt'
+alias p='pwd'
+alias tx='tmux'
+#alias tmux='tmux -2 '  # 256 colors
+
+alias s='screen'
+alias sl='screen -ls'
+alias sS='screen -S '
+alias sr='screen -r'
+
+# XXX for 循环定义 [?]
+alias sa='screen -S a'
+alias sb='screen -S b'
+alias sc='screen -S c'
+alias sd='screen -S d'
+alias se='screen -S e'
+alias sf='screen -S f'
+
+alias mm="sudo mentohust"
+alias bb="sudo bitlbee -c ~/.bitlbee.conf"
+alias zz="source ~/.zshrc"
+alias b.="source ~/.bashrc"
+
+# wicd 无线连接
+alias ww="wicd-curses"
+
+alias v="vim"
+alias vd="vimdiff"
+
+alias mykvm="qemu-kvm -hda xp.img -m 512 -boot c -vga std -localtime"
+
+[ -f /usr/bin/gvim ] && alias vim='gvim -v'
+
+# }}}
+
+# [ keychain ssh rsync 同步 ]# {{{
+#--------------------------------------------
+alias kk='keychain --nogui $HOME/.ssh/id_rsa'
+alias ks='source $HOME/.keychain/${HOSTNAME}-sh'
+
+# 统一同步目录路径，local --> remote
+alias lru='rsync -altvz --delete -e ssh /home/ink/text/ ubuntu:~/.wen/text'
+alias lrc='rsync -altvz --delete -e ssh /home/ink/text/ cjb:~/.wen/text'
+alias lrct='rsync -altvz --delete -e ssh /home/ink/todo/ cjb:~/.wen/todo'
+
+# 后面不带 XXX 绝对路径 cp 复制远程目录到本地 HOME 家目录，[?] scp 时间戳
+#alias rlu=' rsync -altvz --delete -e ssh ubuntu:~/.wen/text ~'
+#alias rlc=' rsync -altvz --delete -e ssh cjb:~/.wen/text ~'
+
+alias fuckgfw="ssh -CNTfnq -D 7070 57wsqh@216.194.70.6"
+
+
+
+
+# }}}
+
+# [ Sudo ]# {{{
+#--------------------------------------------
+alias Cp="sudo cp"
+alias Mv="sudo mv"
+alias Rm="sudo rm"
+alias Vim="sudo vim"
+alias halt="sudo halt"
+alias reboot="sudo reboot"
+alias ht='sudo halt'
+alias rb='sudo reboot'
+# 休眠
+#alias sp='sudo pm-suspend'
+
+
+
+# }}}
+
+# [ U 盘挂载 ]# {{{
+#--------------------------------------------
+# U 盘挂载
+alias Uin="sudo mount -t vfat -o iocharset=utf8,uid=1000,gid=100 "
+alias Uout="sudo umount "
+alias mym="sudo mount -o iocharset=utf8,uid=1000,gid=100 "
+alias myu="sudo umount "
+
+
+
+
+# }}}
+
+# [ code ]# {{{
+#--------------------------------------------
+alias vv="source ~/code/pinax/bin/activate"
+
+# 系统使用的是 python2，使用 python 提示没有这个命令。但 pinax 虚拟开发环境，可以使用 python
+# XXX 要提前加载 虚拟开发环境
+alias pmr="python manage.py runserver"
+alias pms="python manage.py syncdb"
+
+alias p2mr="python2 manage.py runserver"
+alias p2ms="python2 manage.py syncdb"
+
+
+# }}}
+
+# [ todo.sh ]# {{{
+#--------------------------------------------
+
+# From : https://github.com/ginatrapani/todo.txt-cli/wiki/Tips-and-Tricks
+function t() { 
+  if [ $# -eq 0 ]; then
+    todo.sh -d $HOME/.todo/todo.cfg ls
+    #todo.sh -d /home/ink/todo/todo.cfg ls
+  else
+    todo.sh -d $HOME/.todo/todo.cfg $* 
+    #todo.sh -d /home/ink/todo/todo.cfg $* 
+  fi
+}
+
+# From : https://github.com/roylez/dotfiles/blob/master/.zshrc.stalker
+#alias t='todo.sh'
+alias ts='todo.sh show'
+alias ta='t a'
+alias tp='t p'
+alias td='t do'
+alias tw='t wait'
+alias tc='t continue'
+# [?]
+#compdef t=todo.sh
+
+
+
+# }}}
+
+# [ archlinux pacman ]# {{{
+#--------------------------------------------
+
+alias P="pacman"
+alias Y="yaourt"
+
+# 在 后面添加 空格，可以实现自动补全
+alias spm='sudo pacman'
+# --need 跳过已经是最新的安装包，不重新安装
+alias pac="sudo pacman -S --need"
+alias pq='pacman -Q '
+alias pi='pacman -Qi '
+alias pl='pacman -Ql '
+alias pm='sudo pacman -Rsun '
+alias pu="sudo pacman -Scc && sudo pacman -Sy && sudo pacman -Su"
+alias py="sudo pacman -Sy"
+
+alias yao="sudo yaourt -S "
+alias ys="yaourt -Ss "
+# 若要实现 yaourt 查询软件包，可以取消注释 /etc/yaourtrc 
+# AURUPGRADE=0
+# AURSEARCH=0
+# 使用额外的 --aur 指定查询 AUR 里面的软件包，其他类似 pacman
+alias yq="yaourt -Q "
+alias yu="sudo yaourt -Su"
+alias yy="sudo yaourt -Sy"
+
+# 使用 'pacsearch packagename' 查找pkg，只列出软件包的名称，版本号，没有描述信息
+#alias pacsearch="pacman -Sl | cut -d' ' -f2 | grep "
+
+# pacman 查找 输出彩色
+#alias pacs="pacman -Ss "
+alias pacs="pacsearch"
+pacsearch()
+{
+    echo -e "$(pacman -Ss $@ | sed \
+    -e 's#core/.*#\\033[1;31m&\\033[0;37m#g' \
+    -e 's#extra/.*#\\033[0;32m&\\033[0;37m#g' \
+    -e 's#community/.*#\\033[1;35m&\\033[0;37m#g' \
+    -e 's#^.*/.* [0-9].*#\\033[0;36m&\\033[0;37m#g' )"
+}
+
+## XXX 单行函数格式报错
+#po(){ pacman -Qo `which $1` }
+#po() { pacman -Qo `which $1` }
+## XXX 单行函数需要用 ';' 断行
+po() { pacman -Qo `which $1`; }
+
+# }}}
+
+## [ aptitude / apt-get alias]# {{{
+#############################################
+## ~/.bashrc: executed by bash(1) for non-login shells.
+## From Nano Taboada # # some apt aliases
+#
+##alias apt-get='sudo apt-get'
+##alias aptitude='sudo aptitude'
+#
+## [ aptitude ]
+##--------------------------------------------
+#
+#alias clean="sudo aptitude clean"
+#alias install='sudo aptitude install'
+#alias reinstall='sudo aptitude reinstall'
+#alias search="aptitude search"
+#alias show="aptitude show"
+#alias remove='sudo aptitude remove'
+#alias uninstall='sudo aptitude purge'
+## autoclean 保留最近一次缓存，用来回退/回朔
+#alias update='sudo aptitude autoclean && sudo aptitude update'
+#alias upgrade='sudo aptitude autoclean && sudo aptitude update && sudo aptitude upgrade && sudo aptitude autoclean -y'
+#alias fullupgrade='sudo aptitude update && sudo aptitude full-upgrade && sudo aptitude autoclean -y'
+#
+##alias upgrade='sudo aptitude -y update && sudo aptitude -y upgrade && sudo aptitude -y dist-upgrade && sudo aptitude -y autoclean'
+#
+##alias install="sudo apt-get install"
+##alias clean="sudo apt-get autoclean"
+###alias expunge="sudo apt-get autoclean"
+###alias flush="sudo apt-get autoremove"
+##alias remove="sudo apt-get autoremove"
+##alias search="sudo apt-cache search"
+##alias show="sudo apt-cache show"
+##alias update="sudo apt-get update"
+##alias upgrade="sudo apt-get autoclean && sudo apt-get upgrade"
+#
+##alias clean='dpkg -l|grep "^rc"| awk "{print \$2}" | xargs -r sudo aptitude purge -y && sudo aptitude autoclean && sudo deborphan -Z && sudo localepurge'
+#
+##alias add="sudo apt-get install --allow-unauthenticated -y"
+##alias fix="sudo apt-get install --fix-broken --assume-yes"
+##alias remove="sudo apt-get remove --assume-yes"
+##alias update="sudo apt-get update --assume-yes"
+##alias upgrade="sudo apt-get upgrade --assume-yes"
+##alias expunge="sudo apt-get autoclean --assume-yes"
+##alias flush="sudo apt-get autoremove --assume-yes"
+#
+## }}}
+#
+## [ fedora ]#{{{
+##--------------------------------------------
+#
+#alias vx="vimx"
+##alias vim="vimx"
+#
+##}}}
+#
+## [ 参考 / 待整理 ]#{{{
+##--------------------------------------------
+#
+# 历史命令 top10
+#alias top10='print -l  ${(o)history%% *} | uniq -c | sort -nr | head -n 10'
+
+# [ XXX ] #--------------------------------------------
+
+#alias cr='ctags -R --fields=+lS && cscope -Rbq'
+#alias dt='dmesg | tail -n 20'
+## 关闭屏保，在看电影时防止屏幕进入屏保
+#alias dx='xset s off && xset dpms 0 0 0'
+#alias m='md5sum'
+#alias s='sha1sum'
+#alias x='startx'
+#
+#alias ntp='sudo ntpdate pool.ntp.org && sudo hwclock --systohc'
+#
+##alias iodrag="ionice -c3 nice -n19"
+#
+## 为执行时间比较长的命令添加别名，如： sleep 10; alert
+## 依赖于 libnotify-bin 软件包
+#alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+
+## https://github.com/Barrucadu/home/blob/master/config/zsh/aliases
+#
+## Short aliases
+#alias !='sudo'
+#alias @='chromium'
+#alias e='exit'
+#alias o=$EDITOR
+#alias O='sudoedit'
+#
+## Basic commands
+#alias su='su - '
+#alias free='free -mt'
+#alias grep='grep --color=tty -d skip'
+#
+#
+#alias lls='/bin/ls'
+#
+#alias laa='ls --color=auto -la'
+#
+#alias locate='locate -e -L'
+#alias mkdir='mkdir -p'
+#alias tree='tree -L 2 -d -l'
+#
+## Security
+#alias gpgsig='gpg -a --detach-sign'
+#alias gpgasc='gpg -e -r 23C44846 -a'
+#alias pw='echo `< /dev/urandom tr -cd "[:graph:]" | head -c8`'
+#
+## Servers
+#alias sql='mysql -p -u root'
+#alias rtorrent='ssh -t rtorrent@eihort "screen -r rtorrent"'
+#alias hurd='ssh -p 2222 root@localhost'
+#
+## Coding
+##alias gcc='gcc -Wall -Wextra -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -Wno-long-long -Winit-self -Wmissing-prototypes -Wstrict-prototypes -Wconversion -pedantic'
+##alias val='valgrind --tool=memcheck --leak-check=full --show-reachable=yes'
+##alias gdb='gdb -ex run -ex backtrace --args'
+#
+## Miscellanious
+#if [[ $UID != 0 ]]; then
+#    alias aliases='cat ~/config/zsh/aliases'
+#    alias functions='cat ~/config/zsh/functions'
+#    alias shutdown='sudo shutdown -hP now'
+#    alias reboot='sudo reboot'
+#else
+#    alias aliases='cat /home/ink/config/zsh/aliases'
+#    alias functions='cat /home/ink/config/zsh/functions'
+#fi
+#
+#alias mp3ogg='mp32ogg-bash *.mp3 && rm *.mp3'
+#alias flacogg='echo ".\n.\n6" | flac2ogg && rm *.flac'
+#
+#alias xreload='xrdb -load ~/.Xdefaults'
+#
+#alias myman='myman -z big -i'
+#
+#alias qemu='qemu -net nic,vlan=1,model=pcnet -net user,vlan=1 --enable-kvm -m 1G'
+#
+#alias units='units --verbose -1'
+#alias dvdplayer="mplayer -profile dvd dvdnav://"
+#alias burniso="wodim -v dev=/dev/cdrom speed=1"
+#alias pumount='pmount -u'
+#alias mineserver='forward yuggoth 25565 eihort'
+#
+## file management:
+#alias ls="/bin/ls -h --file-type --time-style='+%y-%m-%d %H%M%S' --color=auto --group-directories-first"
+#
+#alias lb="ls -Ssr"
+#alias lt="ls -tr"
+#alias lm="lt -c"
+#alias lx="ls -X"
+#alias lls="ls -l"
+#alias lla="lls -A"
+#alias llb="lls -Ssr"
+#alias llt="lls -tr"
+#alias llm="llt -c"
+#alias llx="lx -l"
+#alias rd="/bin/rm -r"
+#
+## useless quick views/edits:
+#alias wika="${BROWSER:-/usr/bin/w3m} /usr/share/doc/arch-wiki/html/index.html"
+#alias sedit="${EDITOR:-/usr/bin/vim} -p ${HOME}/.stumpwmrc ${XDG_CONFIG_DIR:-${HOME}}/stumpwm/{functions,macros,commands,hooks,key-maps}.lisp"
+#alias zedit="${EDITOR:-/usr/bin/vim} -p ${HOME}/{.zshrc,zsh/{functions,aliases,exports,options,.zlogin}}"
+#alias xedit="${EDITOR:-/usr/bin/vim} -p ${XDG_CONFIG_DIR:-${HOME}}/xorg/{xinitrc,Xdefaults}"
+#alias zload=". ${HOME}/.zshrc"
+#alias xload="xrdb -load ${XDG_CONFIG_DIR:-${HOME}}/xorg/Xdefaults &>/dev/null"
+#alias gh="cd ${H:-/howl}"
+#
+## program masquing:
+#
+#alias svim="sudo ${EDITOR:-/usr/bin/vim}"
+#alias info="/usr/bin/info --vi-keys"
+#
+#alias mutt="/usr/bin/mutt -F ${XDG_CONFIG_DIR:-${HOME}}/mutt/muttrc"
+#alias xskat="/usr/bin/xskat -opt ${XDG_CONFIG_DIR:-${HOME}}/xorg/xskat.opt -list ${XDG_CONFIG_DIR:-${HOME}}/xorg/xskat.lst"
+#
+#alias offlineimap="/usr/bin/offlineimap -c ${XDG_CONFIG_DIR:-${HOME}}/.offlineimap/offlineimaprc"
+#alias rtorrent="/usr/bin/rtorrent -o http_capath=/etc/ssl/certs"
+#alias startx="cd ~/ && /usr/bin/startx ${XDG_CONFIG_DIR:-${HOME}}/xorg/xinitrc -- -nolisten tcp -once -retro ; pushd -q +1"
+#
+## system/media shortcuts:
+#alias psu="print 'ELAPSETIME %CPU NI +? LWPID # COMMAND';/bin/ps -U root,privoxy,15,http,daemon,nobody,unbound --deselect -C tmux,urxvt -H hoetime:10,%cpu:5,ni:2,stat:4,pid:5,rtprio:1,args"
+#alias psr="print 'ELAPSETIME %CPU NI +? LWPID # COMMAND';/bin/ps -u root -U root -H hoetime:10,%cpu:5,ni:2,stat:4,pid:5,rtprio:1,args"
+#alias psa="print 'ELAPSETIME USER %CPU NI +? LWPID # COMMAND';/bin/ps -H haxoetime:10,user:4,%cpu:5,ni:2,stat:4,pid:5,rtprio:1,args"
+#alias pso="print 'ELAPSETIME USER %CPU NI +? LWPID # COMMAND';/bin/ps -U root,h --deselect -u root,h -H hoetime:10,user:4,%cpu:5,ni:2,stat:4,pid:5,rtprio:1,args"
+#alias dfu="/bin/df -hTP -x debugfs"
+#alias dii="/usr/bin/di -x debugfs -d h -Af sMTbuf"
+#alias mii="/usr/bin/mi -x debugfs"
+#alias loadavg='print ${$(</proc/loadavg)[1,3]}'
+#alias daemons='lt /run/daemons'
+#alias reboot='/bin/sync && sudo /sbin/reboot'
+#alias {poweroff,pow}='/bin/sync && sudo /sbin/poweroff'
+#alias mix2="/usr/local/bin/ossvol --speakers --quiet && /usr/local/bin/ossvol -a"
+#alias mix3="/usr/local/bin/ossvol --headphones --quiet && /usr/local/bin/ossvol -a"
+#alias siteget="/usr/bin/wget --recursive --page-requisites --convert-links --html-extension --no-parent --random-wait --limit-rate=20K -U Mozilla -l" #depth, then url
+#
+## database/package management:
+#alias upf="sudo /usr/bin/fc-cache -vr"
+#alias upd="sudo /etc/cron.daily/updatedb"
+#alias upm="sudo /usr/bin/mandb --quiet"
+#alias pacman="sudo /usr/bin/pacman-color"
+#
+##}}}
+
+#}}}
+
+
+## 判断发行版
+if [ -f /etc/arch-release ]
+then
+    export DISTRO='ARCHLINUX'
+elif [ -f /etc/gentoo-release ]
+then
+    export DISTRO='GENTOO'
+fi
+
+# type -a time
+# whereis time | tr ' ' '\n' | grep bin
+# which time
+
+# https://github.com/milomouse/dotfiles/blob/master/zsh/functions
+## 
+# check ownership of given argument, as determined by pacman:
+function owns {
+  if [[ -n $(for each in ${PATH//:\\\n}; do find ${each}/$1 2>/dev/null ; done) ]]
+  then pacman -Qo $(which -p $1)
+  else pacman -Qo $1 ; fi
+}
+
+## jump to previous directory by integer or reg-exp, also list dirs,
+## else jump to last visited directory if no argument supplied:
+#function back {
+#  if [[ $# == 1 ]]; then
+#    case $1 {
+#      <->) pushd -q +$1 2>/dev/null ;;
+#      --) dirs -lpv|sed '2s|$| \[last\]|' ;;
+#      *) [[ -n $(dirs -lpv|grep -i $1|grep -v ${PWD}) ]] && \
+#              pushd -q +${$(dirs -lpv|grep -i $1|grep -v ${PWD})[1]}
+#    }
+#  else pushd -q - 2>/dev/null ; fi
+#}
+#
+## go up Nth amount of directories:
+#function up {
+#  local arg=${1:-1};
+#  while [ ${arg} -gt 0 ]; do
+#    cd .. >&/dev/null;
+#    arg=$((${arg} - 1));
+#  done
+#}
+#
+## show ps information with simple output for scripts, quick views, etc:
+#function psi {
+#  if [[ ${#${@:/$0}} -ge 2 ]]; then
+#    case $1 {
+#      '-C'|'-c') ps -C $2 hopid,args ;; # by- command name
+#      '-G'|'-g') ps -G $2 hopid,args ;; # by- real group id (RGID)/name
+#      '-U'|'-u') ps -U $2 hopid,args ;; # by- effective user ID (EUID)/name
+#      '-P'|'-p') ps -p $2 hoargs ;; # by- pid
+#      '-S'|'-s') ps -s $2 hopid,args ;; # by- session id
+#      '-T'|'-t') ps -t $2 hopid,args ;; # by- tty
+#      *) print "invalid selection. read: man ps (section: process selection by list)"
+#    }
+#  else
+#        << EOP
+#(show process information by .. )
+#psi -c ARG | command name
+#psi -g ARG | group id
+#psi -u ARG | user id
+#psi -p ARG | pid
+#psi -s ARG | session id
+#psi -t ARG | tty
+#EOP
+#  fi
+#}
+
+# one-liners/micro functions:
+#function flashproc { for f (${$(file /proc/$(pidof luakit)/fd/*|gawk '/\/tmp\/Flash/ {print $1}')//:}){print - "$f"} }
+#function lss { ls -- ${1:-.}/*(D.om) }
+#function rc { [[ -n $1 ]] && sudo /etc/rc.d/$1 ${@:/$1} }
+#function alv { <${${$(command find ${H:-/howl}/othe/archive/installed_*)}[${1:--1}]}|w3m -o pagerline=1000 -o confirm_qq=0 }
+function mkcd { command mkdir -p "$@" && cd "$@" ;}
+#function pubip { curl -m 30 http://automation.whatismyip.com/n09230945.asp }
+#function newmail { print - ${(Fw)#$(find /howl/mail/*/*/new -type f)} }
+#function qdep { pacman-color -Q $@ $(pacman-color -Qi $@|grep Depends|cut -d: -f2-|sed -E 's|>\S+\>||g') }
+#function timec { print "$(date +'%T %Y-%m-%d')" ; while sleep 1 ; do printf '\r%s ' "$(date +'%T %Y-%m-%d')" ; done }
+#function dropcache { sync && command su -s /bin/zsh -c 'echo 1 > /proc/sys/vm/drop_caches && echo 2 > /proc/sys/vm/drop_caches' root }
+
+## 禁用 SSH 远程主机的公钥检查 http://www.worldhello.net/2010/04/08/1026.html
+alias nssh='ssh -C4 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null '
+alias nscp='scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null '
+
+function ixio {
+    ## cat - | curl -sF 'f:1=<-' ix.io
+    ## <cmd> |& curl -F 'f:1=<-' ix.io
+    ## lspci -nn |& curl -F 'f:1=<-' ix.io
+    curl -sF 'f:1=<-' http://ix.io/
+}
+
+function elimage {
+    ## http://img.vim-cn.com/
+    [[ -f $1 ]] && curl --compressed -F "name=@$1" http://img.vim-cn.com/ || echo "$1 NOT image file"
+    ## XXX 无效
+    ##curl -F "screenshot=@$1" -F 'paste=1' http://paste.ubuntu.org.cn
+}
+
+
+
+
+
+
+
+
+
+
+
+# vim:set et ft=sh fdm=marker sw=4 sts=4 ts=4 nopaste :

@@ -1,0 +1,13 @@
+#!/usr/bin/env python2
+# coding:utf8
+
+import readline
+import rlcompleter
+readline.parse_and_bind("tab: complete")
+
+# XXX 在 .bashrc / .zshrc
+# export PYTHONSTARTUP=~/.pythonstartup
+
+# XXX 进入交互式 python 手动载入
+#import readline, rlcompleter; readline.parse_and_bind("tab: complete")
+

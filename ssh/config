@@ -1,0 +1,143 @@
+# vim:set et ft=sshconfig fdm=marker sw=4 sts=4 ts=4 nopaste :
+
+# 连接前检查 ~/.ssh/know_hosts 防止 DNS 欺骗，默认：yes
+CheckHostIP no
+StrictHostKeyChecking no
+UserKnownHostsFile /dev/null
+
+# [ multiple sessions sharing 连接共享 ]# {{{
+#--------------------------------------------
+# 连接共享 Enables the sharing of multiple sessions over a single network connection.
+# 多次连接同一个 ssh 时只需第一次连接时进行验证，后面多次建立 SSH 会话共享第一次连接时创建的套接字
+# auto - 自动对所有后续连接使用主连接的套接
+# autoask – 下一次创建新的连接时进行确认，回答 yes 共享之前创建的主连接套接字
+ControlMaster autoask
+# 在 /tmp 目录下创建的 socket 文件名格式
+# %r - remote login name
+# %h - host name ( remote )
+# %p – port
+ControlPath /tmp/ssh_socket_%r@%h:%p
+# "长连接" 最后的连接退出后 master connection 依然在后台保持连接，直到：超时 / -O exit / kill
+ControlPersist 4h
+
+# ssh -fMN HOST     创建 master socket
+# ssh -O exit HOST  退出 master socket
+# ssh -O check HOST 检查 master socket
+
+# }}}
+
+# [ host alias ]# {{{
+#--------------------------------------------
+
+# 域名 github.com，git 提交时匹配 github
+# From : help.github.com/troubleshooting-ssh/
+Host github
+    HostName github.com
+    User git
+    # 仅支持 密钥验证，不支持 密码验证
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/id_rsa
+
+# }}}
+
+# [ 加速 ]# {{{
+#--------------------------------------------
+
+# 使用 IPv4 地址，省略 IPv6 查找 : any , inet (use IPv4 only)  inet6 (use IPv6 only)
+AddressFamily inet
+
+# 数据 传送压缩，默认：no
+Compression yes
+
+# 压缩比率，1-9 之间的整数，越大越压缩越高，默认：6
+#CompressionLevel 4
+
+# ssh -vvv 分析连接耗时: gssapi-with-mic # GSSAPI authentication will only work over V2 Connections
+# gentoo : Unsupported option "GSSAPIAuthentication"
+#GSSAPIAuthentication no
+
+# }}}
+
+# [ 保持连接 ]# {{{
+#--------------------------------------------
+
+# 定期检查连接是否存活。若服务器崩溃或者由于其他原因导致连接死掉
+# ssh连接中断，选项不加密，且容易受到IP欺骗（IP Spoofing），默认：yes
+TCPKeepAlive yes
+
+# SSH Timeout - Write failed: Broken pipe
+# https://wiki.archlinux.org/index.php/Secure_Shell#Keep_alive
+ServerAliveInterval 120
+
+# }}}
+
+# [ Forward 连接 ]# {{{
+#--------------------------------------------
+
+# 递归登录（本机 --> 远程1 --> 远程2），将本地 ssh-agent 管理的私密forward传递到服务端
+# 默认：no
+# 注意：服务器 sshd_config 同时开启才可以继续连接其他服务器
+ForwardAgent yes
+
+# 在本地运行远程的 GUI X 程序，默认：no
+## https://wiki.archlinux.org/index.php/Secure_Shell#X11_forwarding
+## sshd server : AllowTcpForwarding X11Forwarding X11DisplayOffset X11UseLocalhost
+## ssh client : ForwardX11 ForwardX11Trusted
+ForwardX11 yes
+
+# }}}
+
+# [ port forwarding 端口转发 端口映射 ]# {{{
+#--------------------------------------------
+
+# 远程主机连接本地端口，默认：no
+GatewayPorts yes
+
+# -L 本地转发 Local Forward
+# -R 远程转发 Remote Forward
+# -D 动态转发 Dynamic Forward
+
+# [ port forwarding ]
+#--------------------------------------------
+# http://blogs.perl.org/users/smylers/2011/08/ssh-productivity-tips.html
+
+# 端口转发 使用本地程序，连接远程相应端口的服务 数据库
+#Host db
+#  LocalForward 5433 localhost:5432
+
+# [ 无延时 跳板 ]
+#--------------------------------------------
+
+# Jumping Through Servers # XXX 需要开启 ForwardAgent 支持
+# 跳板，代理，通过连接一台 ssh 作为跳板，无延时传输命令给目的主机
+# 使用 netcat (nc,gnc,ncat,gncat)联通跳板，连接过程会 在两台主机分别进行两次认证
+
+#Host db
+#  HostName db.internal.example.com
+#  ProxyCommand ssh gateway netcat -q 600 %h %p
+
+# }}}
+
+# [ tunnel 隧道 ]
+#--------------------------------------------
+# 参数 : -w
+
+
+# [ command example (GFW, BatchMode) ]# {{{
+#--------------------------------------------
+
+## NOTE 忽略：know_hosts / 密码验证
+## ssh -q  -o StrictHostKeyChecking=no \
+##         -o UserKnownHostsFile=/dev/null \
+##         -o ConnectTimeout=4 \
+##         -o BatchMode=yes \
+##         -o PasswordAuthentication=no \
+##         -o PubkeyAuthentication=yes \
+##         "$username@$ip_address" "$HOSTNAME_CMD ; $HOSTNAME_CFG ; $COMMAND" 2>&1
+
+## NOTE ssh 翻墙 后台 运行 隧道 tunnel
+## alias fuckgfw='ssh -CNTfnq -D 7070 $username@$hosname'
+
+# }}}
+
+## http://blogs.perl.org/users/smylers/2011/08/ssh-productivity-tips.html
