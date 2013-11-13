@@ -11,7 +11,7 @@ UserKnownHostsFile /dev/null
 # 多次连接同一个 ssh 时只需第一次连接时进行验证，后面多次建立 SSH 会话共享第一次连接时创建的套接字
 # auto - 自动对所有后续连接使用主连接的套接
 # autoask – 下一次创建新的连接时进行确认，回答 yes 共享之前创建的主连接套接字
-ControlMaster autoask
+ControlMaster yes
 # 在 /tmp 目录下创建的 socket 文件名格式
 # %r - remote login name
 # %h - host name ( remote )
@@ -52,8 +52,9 @@ Compression yes
 # 压缩比率，1-9 之间的整数，越大越压缩越高，默认：6
 #CompressionLevel 4
 
-# ssh -vvv 分析连接耗时: gssapi-with-mic # GSSAPI authentication will only work over V2 Connections
-# gentoo : Unsupported option "GSSAPIAuthentication"
+# ssh -vvv 分析连接耗时: gssapi-with-mic
+# GSSAPI authentication will only work over V2 Connections
+# NOTE gentoo : Unsupported option "GSSAPIAuthentication"
 #GSSAPIAuthentication no
 
 # }}}
@@ -121,7 +122,6 @@ GatewayPorts yes
 # [ tunnel 隧道 ]
 #--------------------------------------------
 # 参数 : -w
-
 
 # [ command example (GFW, BatchMode) ]# {{{
 #--------------------------------------------
