@@ -8,12 +8,14 @@ dotfiles 配置文件
 about
 -----
 
-有些配置文件选项是基于 archlinux 的，可能需要根据自己的发行版重新自定义
+配置文件选项是基于 gentoo 和 archlinux 的，有些不通用的配置需要根据自己的发行版重新自定义
 
 将 ``$HOME`` 下的配置文件独立出来放在 ``dotfiles`` 中的方便之处：
 
 - 统一管理配置，迁移方便，多个系统可以共享挂载点 (arch/gentoo)
 - 在家目录下的误操作受害的都是 ``链接文件`` 降低伤及无辜的风险
+- 之前总是把程序的各种功能都整到配置文件中，加了好多功能平时基本上不会用
+- 这明显偏离了 K.I.S.S 现在需要慢慢的做减法，去掉那些平时不会用到的功能
 
 config file list
 ----------------
@@ -21,21 +23,11 @@ config file list
 *路径无需修改*
 ::
     xinitrc
-    musca_start
-        musca/1366.0.firefox
-        musca/1366.0.gimp
-        musca/1366.0.xterm
-        musca/1366.1.xterm
-        musca/1680.0.firefox
-        musca/1680.0.xterm
-    dzen.sh
-    xmobarrc
-
     Xdefaults
     screenrc
     bashrc
     zshrc
-    alias
+    shrc ( zsh | bash shell share config like alias ... )
     pythonstartup
 
     emacs
@@ -44,14 +36,12 @@ config file list
     pentadactylrc
 
     irssi/config
-    irssi/startup
+    irssi/startup       (load irssi-xmpp module)
     irssi/weed.theme
     irssi/scripts
         adv_windowlist.pl
-        notify.pl
         trackbar-soliton.pl
-    mutt/mailcap
-    mutt/muttrc
+        notify.pl
 
 *媒体文件路径( ncmpcpp 路径影响 taglib 编辑歌曲信息)*
 ::
@@ -60,15 +50,15 @@ config file list
 
 *种子路径/下载路径，按需修改*
 ::
-    rtorrent.rc
     aria2/aria2.conf
-
-    xmodmap
     fonts.conf
     gitconfig
 
 *创建 $HOME 目录下链接文件脚本*
-utils/build.ln.sh
+::
+    utils/build.ln.sh
+
+按需手动创建 ssh/config 链接
 
 missing config
 --------------
@@ -80,12 +70,19 @@ missing config
     .lftprc ==> .lft/rc
     .gtk-bookmarks
 
+*clean 2013.11*
+::
+    dzen
+    rtorrent
+    musca
+    mutt
+    xmobar
+    xmodmap
+
 todo
 ----
 
-- musca 虚拟桌面自动激活浮动模式
-- irssi KDE 提示脚本
-- /etc --> syscfg/
+- /etc --> syscfg/ ( rsync 同步修改 )
 
 thanks
 ------
