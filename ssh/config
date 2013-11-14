@@ -9,9 +9,10 @@ UserKnownHostsFile /dev/null
 #--------------------------------------------
 # 连接共享 Enables the sharing of multiple sessions over a single network connection.
 # 多次连接同一个 ssh 时只需第一次连接时进行验证，后面多次建立 SSH 会话共享第一次连接时创建的套接字
-# auto - 自动对所有后续连接使用主连接的套接
-# autoask – 下一次创建新的连接时进行确认，回答 yes 共享之前创建的主连接套接字
-ControlMaster yes
+# no (default) yes ask
+# auto      不存在 session 时自动创建 share session socket 存在会复用该 session
+# autoask   需要手动再次确认，是否 新建 / 复用 共享 session
+ControlMaster auto
 # 在 /tmp 目录下创建的 socket 文件名格式
 # %r - remote login name
 # %h - host name ( remote )
@@ -37,6 +38,11 @@ Host github
     # 仅支持 密钥验证，不支持 密码验证
     PreferredAuthentications publickey
     IdentityFile ~/.ssh/id_rsa
+
+## TODO nc 代理
+# Host *.example.com
+#         IdentityFile ~/.ssh/id_dsa_example
+#         ProxyCommand ssh 10.23.24.25 'nc %h %p'
 
 # }}}
 
