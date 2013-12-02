@@ -16,6 +16,10 @@ export EDITOR="vi"
 
 export MYSQL_PS1="[\\u@\\h \\d]"
 
+## psql 替换 more
+export PAGER=less
+export LESS="-iMSx4 -FX"
+
 # [ TERM 环境变量 ]
 #--------------------------------------------
 # XXX 在 .Xdefaults 中设置：xterm*termName: xterm-256color
