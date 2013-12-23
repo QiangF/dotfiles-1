@@ -41,3 +41,5 @@
 [user]
 	email = 57lvii@gmail.com
 	name = lvii
+[core]
+	pager = less -R
