@@ -83,6 +83,9 @@ then
 elif [ -f /etc/gentoo-release ]
 then
     export DISTRO=gentoo
+    ## kde widget and wallpaper disappear under opengl compositing with intel video card
+    ## https://www.archlinux.org/news/kde-sc-450-moved-to-extra/
+    export LIBGL_ALWAYS_INDIRECT=1
     synclient TapButton1=1      ## 单指 --> 左键
     synclient TapButton2=2      ## 双指 --> 中建
     synclient TapButton3=3      ## 三指 --> 右键
