@@ -104,23 +104,29 @@ logs = { };
 
 servers = (
   {
+    ## http://www.oftc.net/
+    ## irc://irc.oftc.net:6667 (alternative ports: 6668-6670, 7000), IPv4 and IPv6
+    ## ircs://irc.oftc.net:6697 for SSL (alternative port: 9999), IPv4 and IPv6.
     address = "irc.oftc.net";
     chatnet = "oftc";
-
-    #port = "6667";
-    #use_ssl = "no";
-    #ssl_verify = "no";
-
-    ##use_ssl = "yes";
-    ##ssl_verify = "yes";
-    ##ssl_capath = "/etc/ssl/certs/";
-
+    port = "6697";
+    use_ssl = "yes";
+    ssl_verify = "yes";
+    ssl_capath = "/etc/ssl/certs/";
     autoconnect = "yes";
   },
 
   {
-    address = "irc.freenode.net";
+    ## http://freenode.net/irc_servers.shtml
+    ## All freenode servers listen on ports 6665, 6666, 6667
+    ## 6697 (SSL only), 7000 (SSL only), 7070 (SSL only), 8000, 8001 and 8002.
+    ## /connect -ssl_verify -ssl_capath /etc/ssl/certs chat.freenode.net 6697
+    address = "chat.freenode.net";
     chatnet = "freenode";
+    port = "6697";
+    use_ssl = "yes";
+    ssl_verify = "yes";
+    ssl_capath = "/etc/ssl/certs/";
     autoconnect = "yes";
   },
 
