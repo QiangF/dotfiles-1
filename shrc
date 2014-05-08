@@ -39,9 +39,9 @@ export LESS_TERMCAP_us=$'\E[1;32m'    # begin underline
 # [ man keychain ]# {{{
 #--------------------------------------------
 ## XXX 机器重启 ~/.keychain/${HOSTNAME}-sh 文件还在
-#[[ -z "$HOSTNAME" ]] && HOSTNAME=`uname -n`
-#[[ -f ${HOME}/.keychain/${HOSTNAME}-sh ]] && . $HOME/.keychain/${HOSTNAME}-sh
-#[[ -f ${HOME}/.keychain/${HOSTNAME}-sh-gpg ]] && . $HOME/.keychain/${HOSTNAME}-sh-gpg
+[[ -z "$HOSTNAME" ]] && HOSTNAME=`uname -n`
+[[ -f ${HOME}/.keychain/${HOSTNAME}-sh ]] && . $HOME/.keychain/${HOSTNAME}-sh
+[[ -f ${HOME}/.keychain/${HOSTNAME}-sh-gpg ]] && . $HOME/.keychain/${HOSTNAME}-sh-gpg
 # }}}
 
 
