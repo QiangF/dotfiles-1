@@ -1,7 +1,8 @@
 # vim:set et ft=sshconfig fdm=marker sw=4 sts=4 ts=4 nopaste :
 
 # 连接前检查 ~/.ssh/know_hosts 防止 DNS 欺骗，默认：yes
-CheckHostIP no
+#CheckHostIP no
+
 StrictHostKeyChecking no
 UserKnownHostsFile /dev/null
 
@@ -27,25 +28,6 @@ ControlPersist 4h
 
 # }}}
 
-# [ host alias ]# {{{
-#--------------------------------------------
-
-# 域名 github.com，git 提交时匹配 github
-# From : help.github.com/troubleshooting-ssh/
-Host github
-    HostName github.com
-    User git
-    # 仅支持 密钥验证，不支持 密码验证
-    PreferredAuthentications publickey
-    IdentityFile ~/.ssh/id_rsa
-
-## TODO nc 代理
-# Host *.example.com
-#         IdentityFile ~/.ssh/id_dsa_example
-#         ProxyCommand ssh 10.23.24.25 'nc %h %p'
-
-# }}}
-
 # [ 加速 ]# {{{
 #--------------------------------------------
 
@@ -68,13 +50,12 @@ Compression yes
 # [ 保持连接 ]# {{{
 #--------------------------------------------
 
-# 定期检查连接是否存活。若服务器崩溃或者由于其他原因导致连接死掉
-# ssh连接中断，选项不加密，且容易受到IP欺骗（IP Spoofing），默认：yes
-TCPKeepAlive yes
-
 # SSH Timeout - Write failed: Broken pipe
 # https://wiki.archlinux.org/index.php/Secure_Shell#Keep_alive
 ServerAliveInterval 120
+
+# 定期检查连接是否存活。当服务端当机或网络故障等，导致连接死掉会中断 ssh 连接。默认：yes
+#TCPKeepAlive yes
 
 # }}}
 
@@ -90,7 +71,7 @@ ForwardAgent yes
 ## https://wiki.archlinux.org/index.php/Secure_Shell#X11_forwarding
 ## sshd server : AllowTcpForwarding X11Forwarding X11DisplayOffset X11UseLocalhost
 ## ssh client : ForwardX11 ForwardX11Trusted
-ForwardX11 yes
+#ForwardX11 yes
 
 # }}}
 
@@ -123,11 +104,10 @@ GatewayPorts yes
 #  HostName db.internal.example.com
 #  ProxyCommand ssh gateway netcat -q 600 %h %p
 
-# }}}
+## NOTE socks5 proxy 动态端口转发 ( Dynamic port forwardings )
+## alias fuckgfw='ssh -CNTfnq -D 7070 $username@$hosname'
 
-# [ tunnel 隧道 ]
-#--------------------------------------------
-# 参数 : -w
+# }}}
 
 # [ command example (GFW, BatchMode) ]# {{{
 #--------------------------------------------
@@ -141,9 +121,31 @@ GatewayPorts yes
 ##         -o PubkeyAuthentication=yes \
 ##         "$username@$ip_address" "$HOSTNAME_CMD ; $HOSTNAME_CFG ; $COMMAND" 2>&1
 
-## NOTE ssh 翻墙 后台 运行 隧道 tunnel
-## alias fuckgfw='ssh -CNTfnq -D 7070 $username@$hosname'
+# }}}
+
+# [ tunnel 隧道 ]
+#--------------------------------------------
+# 参数 : -w
+
+## http://blogs.perl.org/users/smylers/2011/08/ssh-productivity-tips.html
+
+## NOTE Host alias 顺序 **必须** 放在后面，不然会覆盖 **全局** 选项
+# [ Host alias ]# {{{
+#--------------------------------------------
+
+# 域名 github.com，git 提交时匹配 github
+# From : help.github.com/troubleshooting-ssh/
+Host github
+    HostName github.com
+    User git
+    # 仅支持 密钥验证，不支持 密码验证
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/id_rsa
+
+## TODO nc 代理
+# Host *.example.com
+#         IdentityFile ~/.ssh/id_dsa_example
+#         ProxyCommand ssh 10.23.24.25 'nc %h %p'
 
 # }}}
 
-## http://blogs.perl.org/users/smylers/2011/08/ssh-productivity-tips.html
