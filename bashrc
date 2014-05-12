@@ -83,7 +83,7 @@ case $TERM in
             #echo -n -e "\033k@`echo $1|sed 's:.*@::'`\033\134″"
             echo -n -e "\ek@`echo $1|sed 's:.*@::'`\e\\"
             /usr/bin/ssh -o UserKnownHostsFile=/dev/null \
-                         -o StrictHostKeyChecking=no $@
+                         -o StrictHostKeyChecking=no -o ServerAliveInterval=30 "$@"
         }
 
         PATHTITLE='\[\ek\W\e\\\]'   # 路径标题

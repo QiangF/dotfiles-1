@@ -805,7 +805,13 @@ function mkcd { command mkdir -p "$@" && cd "$@" ;}
 #function dropcache { sync && command su -s /bin/zsh -c 'echo 1 > /proc/sys/vm/drop_caches && echo 2 > /proc/sys/vm/drop_caches' root }
 
 ## 禁用 SSH 远程主机的公钥检查 http://www.worldhello.net/2010/04/08/1026.html
-alias nssh='ssh -C4 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null '
+function nssh
+{
+    ssh -C4 -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        -o ServerAliveInterval=30 "$@"
+}
+
 alias nscp='scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null '
 
 function ixio {
