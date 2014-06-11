@@ -6,7 +6,7 @@
 settings = {
 
   core = {
-    real_name = "mr.andersen";
+    real_name = "mr.anderson";
     user_name = "if_else";
     nick = "if_else";
     awaylog_level = "none";         ## irssi disable away log
