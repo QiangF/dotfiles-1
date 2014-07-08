@@ -71,7 +71,7 @@ set previouspattern='\bprev|previous\b',^<$,'^(<<|«)$','^(<|«)','(<|«)$','s*�
 "set previouspattern=^(<<|‹‹|«)$
 
 "这个用来对付某些支持热键的网站，如gmail googlereader，暂保留jk可用，简单容易懂。
-set passkeys=https:'//mail.google.comcom|www.google.com/reader/:jk'
+set passkeys=mail.google.com:jk<CR>,gi
 
 
 

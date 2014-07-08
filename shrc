@@ -49,7 +49,12 @@ export LESS_TERMCAP_us=$'\E[1;32m'    # begin underline
 
 
 function gitweek {
-    for i in `git log -7|awk '/commit/{print $2}'`
+    local day=$1
+    if [ -z $day ]
+    then
+        day=7
+    fi
+    for i in `git log -n $day|awk '/commit/{print $2}'`
     do
         git show --pretty="format:" --name-only $i
     done
