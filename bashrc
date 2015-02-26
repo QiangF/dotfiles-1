@@ -1,8 +1,16 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+[[ -f /etc/bashrc ]] && . /etc/bashrc
 [[ -f /etc/bash_completion ]] && source /etc/bash_completion
 [[ -f ${HOME}/.shrc ]] && source ${HOME}/.shrc
+
+#if [ -f /etc/fedora-release ]
+#then
+#    export GTK_IM_MODULE=ibus
+#    export XMODIFIERS=@im=ibus
+#    export QT_IM_MODULE=ibus
+#fi
 
 # [ Prompt PS1 提示符 ]#{{{
 #--------------------------------------------
@@ -421,7 +429,6 @@ export HISTCONTROL=erasedups
 #
 ##}}}
 #
-
 
 
 
