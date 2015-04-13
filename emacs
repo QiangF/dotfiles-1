@@ -33,10 +33,13 @@
 ;; 关闭 默认 scratch buffer 提示信息
 (setq initial-scratch-message nil)
 
-;; 自动保存模式，类似版本控制 自动保存，需要定义备份文件夹路径 [可自定义]
-(setq auto-save-mode nil)
+;; auto-save-mode 模式 M-x recover-file 恢复文件
+;; 默认在当前目录生成 #file# 文件，间歇地保存对 buffer 的修改
+;; http://emacswiki.org/emacs/AutoSave
+;;(setq auto-save-mode nil)
 
-;; 编辑文件时，不将源文件备份为 ~filename
+;; 保存文件时，不将源文件备份为 file~ : C-h v make-backup-files
+;; http://www.gnu.org/software/emacs/manual/html_node/emacs/Backup-Copying.html
 (setq-default make-backup-files 'nil)
 
 ;; 查找时严格区分大小写
