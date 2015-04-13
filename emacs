@@ -1,13 +1,13 @@
 ;; -*- mode: emacs-lisp -*-
-;; Time-stamp: "2013-04-02 20:19:08 ink"
+;; Time-stamp: "2015-04-13 20:25:52 i"
 
 ;; Help 帮助
 ;; C-h f 查看 函数 文档，支持 *通配符* 来匹配，输入 *keyword*，然后按 tab 会展开补全
 ;; C-h v 查看 变量值 和 说明，也支持 *通配符* 来匹配
-;; C-h a 使用正则表达式来查找命令
-;; C-h k 描述我接下来的键入动作
+;; C-h a 正则匹配 **命令**
+;; C-h k KEYS 快捷键 hotkey
 ;; C-h l 显示最近的 100 个键入动作
-;; C-h m 描述当前的 mode
+;; C-h m 当前 mode 文档
 ;; C-h i 查看 info 文档
 
 ;; C-x C-e 执行光标所在语句
@@ -194,6 +194,7 @@
 (add-hook 'write-file-hooks 'time-stamp)
 
 
+
 ;; ENCODING 中文
 ;; --------------------------------------------
 
@@ -203,6 +204,7 @@
 
 ;; 屏蔽 C - <Space>，启用输入法
 (global-set-key (kbd "C-SPC") 'nil)
+(global-set-key (kbd "s-SPC") 'set-mark-command)
 
 ;;;; 中文 字符 编码 encoding
 ;;;; http://blog.waterlin.org/articles/set-emacs-default-coding-system.html
