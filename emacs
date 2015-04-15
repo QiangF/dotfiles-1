@@ -1,5 +1,5 @@
 ;; -*- mode: emacs-lisp -*-
-;; Time-stamp: "2015-04-14 20:27:51 i"
+;; Time-stamp: "2015-04-15 20:54:03 i"
 
 ;; Help 帮助
 ;; M-x apropos 交互式搜索关键词：函数，变量
@@ -155,9 +155,13 @@
 ;;; http://shellfly.org/imitated-effiective-emacs
 ;(setenv "LC_CTYPE" "zh_CN.utf8")
 
-;; 屏蔽 C - <Space>，启用输入法
+;; C-SPC 启用输入法
 (global-set-key (kbd "C-SPC") 'nil)
+(global-unset-key "\C-m")
 (global-set-key (kbd "C-m") 'set-mark-command)
+(global-set-key (kbd "RET") 'newline)
+
+
 
 ;;;; 中文 字符 编码 encoding
 ;;;; http://blog.waterlin.org/articles/set-emacs-default-coding-system.html
@@ -256,19 +260,19 @@
 ;;(set-scroll-bar-mode 'nil)
 ;; 取消光标闪烁
 (blink-cursor-mode 0)
-
+;; 只显示一侧 fringe
+;;(set-fringe-style '(8 . 0))
 ;; 光标颜色
 ;(set-cursor-color "green")
 
-;; 取消 mode-line 状态栏 status bar 3D 样式，若放在主题前面，可能会被主题里面的样式覆盖
+;; 取消 mode-line 状态栏 status bar 3D 样式。放在 theme 前会被主题样式覆盖
 ;; http://www.svenhartenstein.de/Software/Emacs
 ;; http://ldc.usb.ve/docs/emacs/Optional-Mode-Line.html
 (set-face-attribute 'mode-line nil :box nil)
-;;(set-face-attribute 'mode-line-highlight nil :background "light sky blue" :box nil :weight bold)
-;;(set-face-attribute 'mode-line-inactive nil :box nil)
-
-
-
+(set-face-attribute 'mode-line-inactive nil :box nil)
+(set-face-attribute 'mode-line-highlight nil :box nil
+		    :background "light sky blue"
+		    :weight 'bold)
 
 
 
