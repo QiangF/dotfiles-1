@@ -1,5 +1,5 @@
 ;; -*- mode: emacs-lisp -*-
-;; Time-stamp: "2015-04-16 21:05:07 i"
+;; Time-stamp: "2015-04-17 18:13:29 i"
 
 ;; Help 帮助
 ;; M-x apropos 交互式搜索关键词：函数，变量
@@ -204,38 +204,56 @@
 
 ;; C-SPC 启用输入法
 (global-set-key (kbd "C-SPC") 'nil)
-;; (global-unset-key "\C-m")
-;; (global-set-key "\C-m" 'set-mark-command)
-;; (global-set-key [return] 'newline)
+;; C-x C-e 执行 (read-key-sequence "?") 获取 C-. 按键事件(序列) terminal mode 无效
+(global-set-key [67108910] 'set-mark-command)
 
-;; minibuffer 中 RET 无法使用
+
+;; ;; minibuffer 中 RET 无法使用
 ;; (cond ((display-graphic-p)
-;;   ;;(global-set-key (kbd "<return>") 'newline)
-;;   (global-set-key [return] 'newline)
-;;   (global-set-key "\C-m" 'set-mark-command))
 ;; )
 
+;; ;; 取消 mode-line 状态栏 status bar 3D 样式。放在 theme 前会被主题样式覆盖
+;; ;; http://www.svenhartenstein.de/Software/Emacs
+;; ;; http://ldc.usb.ve/docs/emacs/Optional-Mode-Line.html
+;; (set-face-attribute 'mode-line nil :box nil)
+;; (set-face-attribute 'mode-line-inactive nil :box nil)
+;; (set-face-attribute 'mode-line-highlight nil :box nil
+;; 		    :background "light sky blue"
+;; 		    :weight 'bold)
 
 
-;; ;; 前面一串"(if...lambda...(with-select-frame frame ())...)" 是个很好的函数框架
-;; ;; 是指 frame 创建后载入，用这个框架可以解决 --daemon 启动的问题
-;; ;; 只有 set-fontset-font 一句指定修改字符集 'unicode 字体为文泉驿等宽微米黑，大小为 12
-;; (if (and (fboundp 'daemonp) (daemonp))
-;;     (add-hook 'after-make-frame-functions
-;;               (lambda (frame)
-;;                 (with-selected-frame frame
-;;                   (set-fontset-font "fontset-default"
-;;                     'unicode "WenQuanyi Micro Hei Mono 12"))))
-;;   (set-fontset-font "fontset-default" 'unicode "WenQuanYi Micro Hei Mono 12"))
 
-;; 取消 mode-line 状态栏 status bar 3D 样式。放在 theme 前会被主题样式覆盖
-;; http://www.svenhartenstein.de/Software/Emacs
-;; http://ldc.usb.ve/docs/emacs/Optional-Mode-Line.html
-(set-face-attribute 'mode-line nil :box nil)
-(set-face-attribute 'mode-line-inactive nil :box nil)
-(set-face-attribute 'mode-line-highlight nil :box nil
-		    :background "light sky blue"
-		    :weight 'bold)
+(defun ink-gui-setting ()
+  "setting for emacs GUI mode"
+    ;; 取消 mode-line 状态栏 status bar 3D 样式。放在 theme 前会被主题样式覆盖
+    ;; http://www.svenhartenstein.de/Software/Emacs
+    ;; http://ldc.usb.ve/docs/emacs/Optional-Mode-Line.html
+    (set-face-attribute 'mode-line nil :box nil)
+    (set-face-attribute 'mode-line-inactive nil :box nil)
+    (set-face-attribute 'mode-line-highlight nil :box nil
+			:background "light sky blue"
+			:weight 'bold)
+    (set-fontset-font "fontset-default" 'unicode "WenQuanyi Micro Hei Mono 12")
+  )
+
+;; 前面一串"(if...lambda...(with-select-frame frame ())...)" 是个很好的函数框架
+;; 是指 frame 创建后载入，用这个框架可以解决 --daemon 启动的问题
+;; 只有 set-fontset-font 一句指定修改字符集 'unicode 字体为文泉驿等宽微米黑，大小为 12
+(if (and (fboundp 'daemonp) (daemonp))
+  (add-hook 'after-make-frame-functions
+    (lambda (frame)
+      (with-selected-frame frame
+	(ink-gui-setting)
+      )
+    )
+  )
+  (ink-gui-setting)
+  )
+
+
+
+
+
 
 
 
