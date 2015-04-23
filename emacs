@@ -1,5 +1,5 @@
 ;; -*- mode: emacs-lisp -*-
-;; Time-stamp: "2015-04-20 17:54:37 i"
+;; Time-stamp: "2015-04-23 20:54:28 i"
 
 ;; Help 帮助
 ;; M-x apropos 交互式搜索关键词：函数，变量
@@ -71,18 +71,17 @@
 ;; (global-linum-mode 1)
 ;; 语法高亮
 (global-font-lock-mode 1)
-;; 高亮标记配对的括号
+;; 高亮标记配对的括号，默认延时：0.125
 (show-paren-mode 1)
 (setq show-paren-style 'parentheses)
+(setq show-paren-delay 0)
 ;; 显示 trailing whitespace 空白字符
 (setq-default show-trailing-whitespace t)
-
 
 ;; Indent Tab 缩进
 ;; --------------------------------------------
 ;; 使用 空格 代替 Tab 缩进 variable
 ;;(setq indent-tabs-mode nil)
-
 
 ;; mode
 ;; --------------------------------------------
@@ -112,6 +111,14 @@
 ;; ENCODING 中文
 ;; --------------------------------------------
 
+;; hotkey key bonding
+;; --------------------------------------------
+;; C-x C-e 执行 (read-key-sequence "?") 获取 C-. 按键事件(序列) terminal mode 无效
+
+;; C-SPC 启用输入法，C-. 设置标记，terminal 下 C-. 无法工作
+(global-set-key (kbd "C-SPC") 'nil)
+(global-set-key [67108910] 'set-mark-command)
+(global-set-key (kbd "<f7>") 'linum-mode)
 
 ;; GUI Style 样式
 ;; --------------------------------------------
@@ -135,10 +142,8 @@
 (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
 
 
-
 ;; mouse
 ;; --------------------------------------------
-
 ;; 启用鼠标滚轮
 (mouse-wheel-mode t)
 ;; 鼠标 自动聚焦 frame，window 或 minibuffer
@@ -150,43 +155,48 @@
 ;; 滚屏时，锁定光标位置
 (scroll-lock-mode t)
 
-;(setq scroll-margin 0
-;      scroll-conservatively 100000
-;      scroll-preserve-screen-position 1)
+;; (setq scroll-margin 0
+;;       scroll-conservatively 100000
+;;       scroll-preserve-screen-position 1)
 
-;; C-SPC 启用输入法
-(global-set-key (kbd "C-SPC") 'nil)
-;; C-x C-e 执行 (read-key-sequence "?") 获取 C-. 按键事件(序列) terminal mode 无效
-(global-set-key [67108910] 'set-mark-command)
+;; 快速恢复窗口分割状态: C-c <left-arrow>
+;; http://segmentfault.com/a/1190000000456319
+(when (fboundp 'winner-mode)
+  (winner-mode)
+  (windmove-default-keybindings))
 
+;; Shift-<arrow keys> 切换窗口
+;; https://wiki.archlinux.org/index.php/Emacs#Smart_window_switch
+(when (fboundp 'windmove-default-keybindings)
+  (windmove-default-keybindings))
 
 ;; GUI 配置放在后面，避免 color theme 主题里面自带的配置覆盖
 (defun customize-gui-setting ()
   "setting for emacs GUI mode"
-    ;; 取消 mode-line 状态栏 status bar 3D 样式。放在 theme 前会被主题样式覆盖
-    ;; http://www.svenhartenstein.de/Software/Emacs
-    ;; http://ldc.usb.ve/docs/emacs/Optional-Mode-Line.html
-    (set-face-attribute 'mode-line nil :box nil)
-    (set-face-attribute 'mode-line-inactive nil :box nil)
-    (set-face-attribute 'mode-line-highlight nil :box nil
-            :background "light sky blue"
-            :weight 'bold)
-    ;; 只显示一侧 fringe
-    ;;(set-fringe-style '(8 . 0))
-    ;; 窗口 "位置 position" (top left) "大小 size" (height width)
-    (setq default-frame-alist
-      '( ;; (font . "Monospace-10")
-	(top . 80) (left . 80) (height . 37) (width . 100)))
-    ;; 等宽：中文字体 == 2 个英文字体
-    ;; http://donneryst.com/blog/emacs中达成中英文混排表格对齐效果.html
-    ;; Dejavu Sans Mono 10 文泉驿等宽微米黑 12
-    ;;(set-default-font "Dejavu Sans Mono 10")
-    (set-fontset-font "fontset-default" 'unicode "WenQuanyi Micro Hei Mono 12")
-    ;; Prelude config: display file path as GUI window(frame) title
-    (setq frame-title-format
-	'((:eval (if (buffer-file-name)
-		     (abbreviate-file-name (buffer-file-name))n
-		   "%b"))))
+  ;; 取消 mode-line 状态栏 status bar 3D 样式。放在 theme 前会被主题样式覆盖
+  ;; http://www.svenhartenstein.de/Software/Emacs
+  ;; http://ldc.usb.ve/docs/emacs/Optional-Mode-Line.html
+  (set-face-attribute 'mode-line nil :box nil)
+  (set-face-attribute 'mode-line-inactive nil :box nil)
+  (set-face-attribute 'mode-line-highlight nil :box nil
+          :background "light sky blue"
+          :weight 'bold)
+  ;; 只显示一侧 fringe
+  ;;(set-fringe-style '(8 . 0))
+  ;; 窗口 "位置 position" (top left) "大小 size" (height width)
+  (setq default-frame-alist
+    '( ;; (font . "Monospace-10")
+      (top . 80) (left . 80) (height . 37) (width . 100)))
+  ;; 等宽：中文字体 == 2 个英文字体
+  ;; http://donneryst.com/blog/emacs中达成中英文混排表格对齐效果.html
+  ;; Dejavu Sans Mono 10 文泉驿等宽微米黑 12
+  ;;(set-default-font "Dejavu Sans Mono 10")
+  (set-fontset-font "fontset-default" 'unicode "WenQuanyi Micro Hei Mono 12")
+  ;; Prelude config: display file path as GUI window(frame) title
+  (setq frame-title-format
+      '((:eval (if (buffer-file-name)
+                   (abbreviate-file-name (buffer-file-name))n
+                 "%b"))))
 )
 
 ;; 前面一串"(if...lambda...(with-select-frame frame ())...)" 是个很好的函数框架
