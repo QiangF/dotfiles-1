@@ -1,5 +1,5 @@
 ;; -*- mode: emacs-lisp -*-
-;; Time-stamp: "2015-04-23 20:54:28 i"
+;; Time-stamp: "2015-04-24 16:29:18 i"
 
 ;; Help 帮助
 ;; M-x apropos 交互式搜索关键词：函数，变量
@@ -58,6 +58,8 @@
 
 
 
+
+
 ;; coding
 ;; --------------------------------------------
 
@@ -75,6 +77,8 @@
 (show-paren-mode 1)
 (setq show-paren-style 'parentheses)
 (setq show-paren-delay 0)
+;; 括号自动配对
+(electric-pair-mode)
 ;; 显示 trailing whitespace 空白字符
 (setq-default show-trailing-whitespace t)
 
@@ -113,11 +117,10 @@
 
 ;; hotkey key bonding
 ;; --------------------------------------------
-;; C-x C-e 执行 (read-key-sequence "?") 获取 C-. 按键事件(序列) terminal mode 无效
-
-;; C-SPC 启用输入法，C-. 设置标记，terminal 下 C-. 无法工作
+;; C-x C-e 执行 (read-key-sequence "?") 或 (read-event "?") 获取按键事件(序列)
+;; C-SPC 启用输入法，M-SPC 启用标记
 (global-set-key (kbd "C-SPC") 'nil)
-(global-set-key [67108910] 'set-mark-command)
+(global-set-key (kbd "M-SPC") 'set-mark-command)
 (global-set-key (kbd "<f7>") 'linum-mode)
 
 ;; GUI Style 样式

@@ -840,11 +840,57 @@ function elimage {
 }
 
 
+## http://mjwall.com/blog/2013/10/04/how-i-use-emacs/
+## emacsclient options for reference
+## -a "" starts emacs daemon and reattaches
+## -c creates a new frame
+## -n returns control back to the terminal
+## -e eval the script
 
+## Number of current visible frames, Emacs daemon always has a visible frame called F1
+visible_frames() {
+  emacsclient -a "" -e '(length (visible-frame-list))'
+}
 
+change_focus() {
+  emacsclient -n -e "(select-frame-set-input-focus (selected-frame))" > /dev/null
+}
 
+function ec {
+    # try switching to the frame incase it is just minimized
+    # will start a server if not running
+    test "$(visible_frames)" -eq "1" && change_focus
 
+    if [ "$(visible_frames)" -lt  "2" ]; then # need to create a frame
+	# -c $@ with no args just opens the scratch buffer
+	emacsclient -n -c "$@" && change_focus
+    else # there is already a visible frame besides the daemon, so
+	change_focus
+	# -n $@ errors if there are no args
+	test  "$#" -ne "0" && emacsclient -n "$@"
+    fi
+}
 
+function et {
+    ## ec -e "(message \"Hello\")" > /dev/null
+    exec emacsclient -a "" -t "$@"
+}
+
+server_ok() {
+  emacsclient -a "false" -e "(boundp 'server-process)"
+}
+
+## stop emacs daemon
+function es() {
+    if [ "t" == "$(server_ok)" ]; then
+	echo "Shutting down Emacs server"
+	# wasn't removing emacs from ALT-TAB on mac
+	# emacsclient -e "(server-force-delete)"
+	emacsclient -e '(kill-emacs)'
+    else
+	echo "Emacs server not running"
+    fi
+}
 
 
 
