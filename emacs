@@ -1,5 +1,5 @@
 ;; -*- mode: emacs-lisp -*-
-;; Time-stamp: "2015-04-24 16:29:18 i"
+;; Time-stamp: "2015-04-27 20:53:23 i"
 
 ;; Help 帮助
 ;; M-x apropos 交互式搜索关键词：函数，变量
@@ -118,9 +118,9 @@
 ;; hotkey key bonding
 ;; --------------------------------------------
 ;; C-x C-e 执行 (read-key-sequence "?") 或 (read-event "?") 获取按键事件(序列)
-;; C-SPC 启用输入法，M-SPC 启用标记
+;; C-SPC 启用输入法，Win-SPC 启用标记
 (global-set-key (kbd "C-SPC") 'nil)
-(global-set-key (kbd "M-SPC") 'set-mark-command)
+(global-set-key (kbd "s-SPC") 'set-mark-command)
 (global-set-key (kbd "<f7>") 'linum-mode)
 
 ;; GUI Style 样式
