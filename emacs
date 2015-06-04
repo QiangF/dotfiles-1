@@ -1,5 +1,5 @@
 ;; -*- mode: emacs-lisp -*-
-;; Time-stamp: "2015-04-27 20:53:23 i"
+;; Time-stamp: "2015-06-04 20:32:04 i"
 
 ;; Help 帮助
 ;; M-x apropos 交互式搜索关键词：函数，变量
@@ -188,17 +188,18 @@
   ;;(set-fringe-style '(8 . 0))
   ;; 窗口 "位置 position" (top left) "大小 size" (height width)
   (setq default-frame-alist
-    '( ;; (font . "Monospace-10")
+    '( ;;(font . "Monospace-12")
       (top . 80) (left . 80) (height . 37) (width . 100)))
   ;; 等宽：中文字体 == 2 个英文字体
   ;; http://donneryst.com/blog/emacs中达成中英文混排表格对齐效果.html
   ;; Dejavu Sans Mono 10 文泉驿等宽微米黑 12
-  ;;(set-default-font "Dejavu Sans Mono 10")
+  ;; Envy Code R 11 文泉驿等宽微米黑 12
+  ;;(set-default-font "Dejavu Sans Mono 10:bold")
   (set-fontset-font "fontset-default" 'unicode "WenQuanyi Micro Hei Mono 12")
   ;; Prelude config: display file path as GUI window(frame) title
   (setq frame-title-format
       '((:eval (if (buffer-file-name)
-                   (abbreviate-file-name (buffer-file-name))n
+                   (abbreviate-file-name (buffer-file-name))
                  "%b"))))
 )
 
@@ -217,9 +218,24 @@
 )
 
 
+;; (add-to-list 'default-frame-alist
+;;              '(font . "Envy Code R-11:weight=bold:antialias=0"))
 
+(add-to-list 'default-frame-alist
+             '(font . "Envy Code R-11"))
 
-
-
-
-
+;; (custom-set-variables
+;;  ;; custom-set-variables was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(blink-cursor-mode nil)
+;;  '(column-number-mode t)
+;;  '(show-paren-mode t)
+;;  '(tool-bar-mode nil))
+;; (custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(default ((t (:family "Envy Code R" :foundry "unknown" :slant normal :weight normal :height 120 :width normal)))))
