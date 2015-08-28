@@ -51,7 +51,7 @@
 function _git_prompt {
 
     ## XXX 旧版 git 不支持 -u normal 参数
-    local git_status="`git status -unormal 2>&1`"
+    local git_status="`LANG=en_US.UTF-8 git status -unormal 2>&1`"
 
     if ! [[ "$git_status" =~ Not\ a\ git\ repo ]]; then
         if [[ "$git_status" =~ nothing\ to\ commit ]]; then
