@@ -113,9 +113,10 @@ syntax on
 " 终端支持256色
 set t_Co=256
 
+"" tmux 导致 256 color 背景色分离
 " 在 screen 启动 vim 在插入模式，方向键失效输出字母 ABCD
 " http://vim.wikia.com/wiki/Fix_arrow_keys_that_display_A_B_C_D_on_remote_shell
-set term=xterm-256color
+"set term=xterm-256color
 
 "" 配合 screen 的256色显示
 ""if $TERM =~ '^xterm' || $TERM =~ '^screen' || has("gui_running")
@@ -133,7 +134,7 @@ if(has("gui_running"))
     set cursorline
 else
     try
-      colorscheme wombat256
+      colorscheme xoria256
     catch
       colorscheme pablo
     endtry
