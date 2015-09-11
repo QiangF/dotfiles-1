@@ -3,6 +3,7 @@
 
 [[ -f /etc/bashrc ]] && . /etc/bashrc
 [[ -f /etc/bash_completion ]] && source /etc/bash_completion
+[[ -f /usr/share/doc/tmux/examples/bash_completion_tmux.sh ]] && source /usr/share/doc/tmux/examples/bash_completion_tmux.sh
 [[ -f ${HOME}/.shrc ]] && source ${HOME}/.shrc
 
 # [ Prompt PS1 提示符 ]#{{{
